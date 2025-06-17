@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
-import {useContext, useEffect} from 'react';
+import { useContext, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 // eslint-disable-next-line react-native/split-platform-components
-import {PermissionsAndroid, Platform} from 'react-native';
+import { PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
 
 import useUser from './user/useUser';
-import {showToast} from 'helpers/showToast';
-import {useNavigationStore} from 'src/store/navigationStore';
-import {BackendApiContext} from 'contexts/BackendApiContex';
+import { showToast } from 'helpers/showToast';
+import { useNavigationStore } from 'src/store/navigationStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
@@ -15,9 +15,9 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 
 const useMessaging = () => {
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const {mutate: sendToken} = invitedOnlyBackendApi?.useMutation('post', '/auth/messaging/token') ?? {mutate: async () => {}};
-  const {user} = useUser();
-  const {isChatScreen} = useNavigationStore();
+  const { mutate: sendToken } = invitedOnlyBackendApi?.useMutation('post', '/auth/messaging/token') ?? { mutate: async () => { } };
+  const { user } = useUser();
+  const { isChatScreen } = useNavigationStore();
 
   const sendTokenToServer = async (token: string) => {
     console.log('Sending FCM token to server:', token);
@@ -36,6 +36,29 @@ const useMessaging = () => {
         const authStatus = await messaging().requestPermission();
         enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
         console.log('iOS Authorization status:', authStatus);
+
+        if (authStatus === messaging.AuthorizationStatus.DENIED) {
+          return new Promise(resolve => {
+            Alert.alert(
+              'Notification Permission Required',
+              'Please allow notifications to receive important updates. You can change this in your device settings.',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                  onPress: () => resolve(false),
+                },
+                {
+                  text: 'Open Settings',
+                  onPress: () => {
+                    Linking.openSettings();
+                    resolve(false);
+                  },
+                },
+              ],
+            );
+          });
+        }
       } else if (Platform.OS === 'android') {
         const alreadyGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
         if (alreadyGranted) {
@@ -43,6 +66,29 @@ const useMessaging = () => {
         } else {
           const status = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
           enabled = status === PermissionsAndroid.RESULTS.GRANTED;
+
+          if (status === PermissionsAndroid.RESULTS.DENIED) {
+            return new Promise(resolve => {
+              Alert.alert(
+                'Notification Permission Required',
+                'Please allow notifications to receive important updates. You can change this in your device settings.',
+                [
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => resolve(false),
+                  },
+                  {
+                    text: 'Open Settings',
+                    onPress: () => {
+                      Linking.openSettings();
+                      resolve(false);
+                    },
+                  },
+                ],
+              );
+            });
+          }
         }
         console.log('Android Authorization status:', enabled ? 'Granted' : 'Denied');
       }
@@ -52,11 +98,14 @@ const useMessaging = () => {
         const token = await messaging().getToken();
         console.log('FCM Token:', token);
         await sendTokenToServer(token);
+        return true;
       } else {
         console.log('Notification permission denied.');
+        return false;
       }
     } catch (error) {
       console.error('Error requesting permission or getting token:', error);
+      return false;
     }
   }
 

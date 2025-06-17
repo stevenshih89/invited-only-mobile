@@ -1,11 +1,11 @@
-import React, {FC, JSX} from 'react';
+import React, { FC, JSX } from 'react';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
-import {useVerifyStep} from './hooks/useVerifyStep';
+import { useVerifyStep } from './hooks/useVerifyStep';
 import * as S from './VerifyFirstStep.style';
-import {screenHeight, screenWidth} from 'constants/common';
+import { screenHeight, screenWidth } from 'constants/common';
 
 const VerifySecondStep: FC = (): JSX.Element => {
-  const {handleNext, isLoading, openCamera, selfieSource, imageUri, setImageUri} = useVerifyStep();
+  const { handleNext, isLoading, openCamera, selfieSource, imageUri, setImageUri } = useVerifyStep();
   return (
     <CommonAuthLayout
       title={imageUri ? 'Your photo' : 'Verify yourself'}
@@ -26,17 +26,17 @@ const VerifySecondStep: FC = (): JSX.Element => {
       onSkipPress={
         imageUri
           ? async () => {
-              if (isLoading) return;
-              setImageUri('');
-              await openCamera();
-            }
+            if (isLoading) return;
+            setImageUri('');
+            await openCamera();
+          }
           : undefined
       }>
       <S.Centered>
         {imageUri ? (
           <>
             <S.ImageContainer height={screenHeight / 2.5}>
-              <S.PhotoBackground source={{uri: imageUri}}></S.PhotoBackground>
+              <S.PhotoBackground source={{ uri: imageUri }}></S.PhotoBackground>
             </S.ImageContainer>
           </>
         ) : (

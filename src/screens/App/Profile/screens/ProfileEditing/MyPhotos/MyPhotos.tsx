@@ -56,6 +56,7 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
   } = useMyPhotos({ images, setImages });
 
   const renderPhoto = (image: components['schemas']['UserPhoto'], index: number, isMain: boolean = false) => {
+
     const imageRefs = [viewRef1, viewRef2, viewRef3, viewRef4, viewRef5, viewRef6];
     const offsetsX = [offsetX1, offsetX2, offsetX3, offsetX4, offsetX5, offsetX6];
     const offsetsY = [offsetY1, offsetY2, offsetY3, offsetY4, offsetY5, offsetY6];
@@ -69,7 +70,13 @@ const MyPhotos: FC<MyPhotosProps> = ({ images, setImages }) => {
                 <S.ButtonsContainer>
                   <S.ButtonWrapper>
                     <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(index + 1 || 0)}>
+                    <S.Button
+                      activeOpacity={0.7}
+                      hitSlop={{ left: 15, bottom: 10 }}
+                      onPress={() => {
+                        console.log('openLibrary');
+                        openLibrary(index + 1 || 0);
+                      }}>
                       <PencilWhiteIcon />
                     </S.Button>
                   </S.ButtonWrapper>

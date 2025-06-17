@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { getApp } from '@react-native-firebase/app';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { initializeApiClient } from 'src/api/backend-api';
 
