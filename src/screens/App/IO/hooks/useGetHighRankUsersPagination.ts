@@ -3,11 +3,11 @@ import { BackendApiContext } from "contexts/BackendApiContex";
 import { useAuthStore } from "src/store/authStore";
 
 interface UseGetHighRankUsersPaginationProps {
-    isLocked: boolean | "" | undefined;
     lastDoc?: string;
 }
 
-const useGetHighRankUsersPagination = ({ isLocked, lastDoc }: UseGetHighRankUsersPaginationProps) => {
+const useGetHighRankUsersPagination = ({ lastDoc }: UseGetHighRankUsersPaginationProps) => {
+
     const { userMetadata } = useAuthStore();
 
     const invitedOnlyBackendApi = useContext(BackendApiContext);
@@ -17,7 +17,6 @@ const useGetHighRankUsersPagination = ({ isLocked, lastDoc }: UseGetHighRankUser
                 userId: userMetadata?.uid
             }
         },
-        enabled: isLocked
 
     }, {
         getNextPageParam: (lastPage, _allPages) => {

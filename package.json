@@ -139,6 +139,7 @@
     "react-native-ux-cam": "^6.0.5",
     "react-native-vector-icons": "^10.0.3",
     "react-native-video": "^6.10.2",
+    "react-timer-hook": "^4.0.5",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.15",
     "typescript-eslint": "^8.31.0",

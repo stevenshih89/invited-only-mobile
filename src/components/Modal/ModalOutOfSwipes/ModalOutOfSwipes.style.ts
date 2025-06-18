@@ -119,3 +119,40 @@ export const StyledRadialGradient = styled(RadialGradient).attrs({
   z-index: 2;
   overflow: hidden;
 `;
+
+export const CountdownTimeRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+`;
+
+export const CountdownDigit = styled.Text`
+  background-color: transparent;
+  height: 64px;
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  font-size: ${RFValue(56, 932)}px;
+  text-align: center;
+  min-width: 48px;
+`;
+
+export const CountdownSeparator = styled.Text`
+  color: rgba(255, 255, 255, 0.64);
+  font-size: ${RFValue(56, 932)}px;
+  font-family: ${Satoshi500};
+  margin: 0 4px;
+`;
+
+export const CountdownLabelRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const CountdownLabel = styled.Text`
+  font-family: ${Satoshi400};
+  font-size: ${RFValue(12, 932)}px;
+  color: ${whiteColor};
+  margin: 0 18px;
+`;

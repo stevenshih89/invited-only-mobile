@@ -19,8 +19,8 @@ export const Header = styled.View`
 
 `;
 export const Body = styled.View`
-    width: ${screenWidth * 1}px;
-    height: ${screenHeight * 0.68}px;
+    width: ${screenWidth * 0.98}px;
+    height: ${screenHeight * 0.70}px;
     justify-content: center;
     align-items: center;
 `;

@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
+import { useTimer } from 'react-timer-hook';
 import * as S from './ModalOutOfSwipes.style';
-import { CountdownContainer, CountdownWrapper, StyledCountDown } from './ModalOutOfSwipes.style';
+import { CountdownContainer, CountdownWrapper } from './ModalOutOfSwipes.style';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import Button from 'components/Button/Button';
 
@@ -15,7 +16,12 @@ const ModalOutOfSwipes: FC<ModalOutOfSwipesProps> = ({ timeToUnlock }) => {
     navigation.navigate('/profile/payment');
   };
 
-  const secondsUntilUnlock = Math.max(0, Math.floor((timeToUnlock.getTime() - Date.now()) / 1000));
+  const expiryTimestamp = new Date(timeToUnlock);
+  const {
+    seconds,
+    minutes,
+    hours,
+  } = useTimer({ expiryTimestamp, onExpire: () => { } });
 
   return (
     <S.Container>
@@ -30,13 +36,18 @@ or come back in 24h`}</S.Description>
           <CountdownContainer>
             <CountdownWrapper>
               <S.StyledBlurView />
-              <StyledCountDown
-                until={secondsUntilUnlock}
-                showSeparator
-                timeToShow={['H', 'M', 'S']}
-                onFinish={() => { }}
-                size={36}
-              />
+              <S.CountdownTimeRow>
+                <S.CountdownDigit>{String(hours).padStart(2, '0')}</S.CountdownDigit>
+                <S.CountdownSeparator>:</S.CountdownSeparator>
+                <S.CountdownDigit>{String(minutes).padStart(2, '0')}</S.CountdownDigit>
+                <S.CountdownSeparator>:</S.CountdownSeparator>
+                <S.CountdownDigit>{String(seconds).padStart(2, '0')}</S.CountdownDigit>
+              </S.CountdownTimeRow>
+              <S.CountdownLabelRow>
+                <S.CountdownLabel>HOURS</S.CountdownLabel>
+                <S.CountdownLabel>MINUTES</S.CountdownLabel>
+                <S.CountdownLabel>SECONDS</S.CountdownLabel>
+              </S.CountdownLabelRow>
             </CountdownWrapper>
           </CountdownContainer>
           <Button

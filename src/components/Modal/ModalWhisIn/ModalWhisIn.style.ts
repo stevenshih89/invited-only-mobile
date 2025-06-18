@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import { BlurView } from '@react-native-community/blur';
 import { RFValue } from 'react-native-responsive-fontsize';
-import CountDown from 'react-native-countdown-component';
-import { screenHeight } from 'constants/common';
 import { whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import { screenWidth } from 'constants/common';
+
 
 export const Container = styled.View`
   position: absolute;
@@ -12,19 +12,19 @@ export const Container = styled.View`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 5;
+  z-index: 1000;
+
 `;
 
 export const ModalWrapper = styled.View`
   margin-top: auto;
-  margin-bottom: ${screenHeight / 10}px;
-  width: 107%;
+
+  width: 100%;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
   align-self: center;
   position: relative;
-  padding-horizontal: 24px;
 `;
 
 export const ContentWrapper = styled.View`
@@ -65,7 +65,7 @@ export const LockText = styled.Text`
 
 export const Title = styled.Text`
   font-family: ${Satoshi500};
-  font-size: ${RFValue(24, 932)}px;
+  font-size: ${RFValue(28, 932)}px;
   color: ${whiteColor};
   margin-top: 8px;
 `;
@@ -76,35 +76,6 @@ export const Description = styled.Text`
   color: ${whiteColor};
   opacity: 0.8;
   margin-top: 8px;
+  width: ${screenWidth * 0.55}px;
+  text-align: center;
 `;
-
-export const CountdownContainer = styled.View`
-  width: 100%;
-  margin-top: 24px;
-`;
-
-export const CountdownWrapper = styled.View`
-  padding-bottom: 12px;
-  border-radius: 10px;
-  width: 100%;
-`;
-
-export const StyledCountDown = styled(CountDown).attrs({
-  digitStyle: {
-    backgroundColor: 'transparent',
-    height: 64,
-  },
-  separatorStyle: {
-    color: 'rgba(255, 255, 255, 0.64)',
-  },
-  digitTxtStyle: {
-    color: whiteColor,
-    fontFamily: Satoshi500,
-    fontSize: RFValue(56, 932),
-  },
-  timeLabelStyle: {
-    fontFamily: Satoshi400,
-    fontSize: RFValue(8, 932),
-    marginTop: 0,
-  },
-})``;

@@ -1,6 +1,6 @@
 import * as S from './CardActionsButtons.style';
 
-interface CardActionsButtonsProps {
+export interface CardActionsButtonsProps {
     thisVersion?: boolean;
     disabled: boolean;
     onReject?: () => void;

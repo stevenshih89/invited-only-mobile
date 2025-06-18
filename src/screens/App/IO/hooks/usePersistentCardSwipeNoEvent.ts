@@ -10,7 +10,6 @@ interface UsePersistentCardSwipeProps<T extends GuestUser> {
 interface UsePersistentCardSwipeReturn<T extends GuestUser> {
     handleSwipeLeft: () => void;
     handleSwipeRight: () => void;
-    handleSuperInvite: () => void;
     cards: T[];
     hasCards: boolean;
     resetDeck: () => void;
@@ -46,7 +45,7 @@ const usePersistentCardSwipeNoEvent = <T extends GuestUser>({
 
     const handleSwipeLeft = useCallback(() => handleSwipe(), [handleSwipe]);
     const handleSwipeRight = useCallback(() => handleSwipe(), [handleSwipe]);
-    const handleSuperInvite = useCallback(() => handleSwipe(), [handleSwipe]);
+
 
     const resetDeck = useCallback(() => {
         setDismissedCards(new Set());
@@ -59,7 +58,6 @@ const usePersistentCardSwipeNoEvent = <T extends GuestUser>({
         hasCards,
         handleSwipeLeft,
         handleSwipeRight,
-        handleSuperInvite,
         resetDeck,
     };
 };

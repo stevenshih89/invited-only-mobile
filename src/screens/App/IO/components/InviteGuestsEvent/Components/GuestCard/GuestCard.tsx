@@ -1,10 +1,11 @@
 import { components } from '@invited-only/invited-only-api';
 import moment from 'moment';
 
+import { ComponentType } from 'react';
 import { useCardGesture } from '../../hooks/useCardGesture';
 import * as S from './GuestCard.style';
 import Card from 'screens/App/Components/Card/Card';
-import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
+import { CardActionsButtons, CardActionsButtonsProps } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import useUser from 'hooks/user/useUser';
 
 interface Props {
@@ -17,9 +18,12 @@ interface Props {
   topIndex: number;
   overrideShowDots?: boolean
   raiseShuffle?: boolean
+  actionButtonsOverride?: boolean
+  CardActionsComponent?: ComponentType<CardActionsButtonsProps>;
+
 }
 
-export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex, overrideShowDots, raiseShuffle }: Props) => {
+export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex, overrideShowDots, raiseShuffle, actionButtonsOverride, CardActionsComponent }: Props) => {
   const { user } = useUser();
   const isLocked = user?.uid && !user?.accountPremium;
 
@@ -76,7 +80,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
       likeOpacityStyle={likeOpacityStyle}
       nopeOpacityStyle={nopeOpacityStyle}>
 
-      {!isLocked && isTopCard && (
+      {((!isLocked && isTopCard) || (actionButtonsOverride && isTopCard)) && (
         <S.CardContent>
           <S.CardNameAndAge>
             <S.StyledCheckStar />
@@ -86,7 +90,9 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
             </S.CardName>
             {guest.showAge && <S.CardGuestAge>{calculateAge(guest.birthday)}</S.CardGuestAge>}
           </S.CardNameAndAge>
-          <CardActionsButtons disabled={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />
+          {CardActionsComponent ? <CardActionsComponent
+            disabled={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} /> : <CardActionsButtons
+            disabled={false} onReject={onClickReject} onSuperInvite={onClickSuperLike} onInvite={onClickInvite} />}
         </S.CardContent>
       )}
     </Card>
