@@ -11,7 +11,6 @@ const useUserSwipe = () => {
     const { userMetadata } = useAuthStore();
     const { mutate, isPending: isSwipingUser } = backendApi.useMutation('post', '/swipe/create', {
         onSuccess: () => {
-            console.log('onSuccess, swipeUser success');
             queryClient.setQueriesData(
                 { queryKey: ['get', '/users/{id}', { params: { path: { id: userMetadata?.uid } } }] },
                 (old: components['schemas']['User']) => {

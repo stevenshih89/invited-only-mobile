@@ -19,7 +19,7 @@ export const Header = styled.View`
 
 `;
 export const Body = styled.View`
-    width: ${screenWidth * 0.95}px;
+    width: ${screenWidth * 1}px;
     height: ${screenHeight * 0.68}px;
     justify-content: center;
     align-items: center;

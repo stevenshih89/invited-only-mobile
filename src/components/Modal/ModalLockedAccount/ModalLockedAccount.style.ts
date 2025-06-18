@@ -1,7 +1,6 @@
 import styled from 'styled-components/native';
 import { BlurView } from '@react-native-community/blur';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { screenHeight } from 'constants/common';
 import { whiteColor } from 'constants/colors';
 import { Satoshi400, Satoshi500 } from 'constants/fonts';
 
@@ -11,7 +10,7 @@ export const Container = styled.View`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 1000;
 
 `;
 
