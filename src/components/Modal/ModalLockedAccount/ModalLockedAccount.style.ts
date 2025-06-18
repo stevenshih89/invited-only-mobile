@@ -11,7 +11,6 @@ export const Container = styled.View`
   left: 0;
   right: 0;
   z-index: 1000;
-
 `;
 
 export const ModalWrapper = styled.View`

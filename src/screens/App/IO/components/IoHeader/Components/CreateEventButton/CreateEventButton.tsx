@@ -20,7 +20,7 @@ const CreateEventButton = ({ buttonStyle }: { buttonStyle?: StyleProp<ViewStyle>
           navigate(navigationPath as never);
         }}>
         <CreateEventIcon />
-        <S.CreateEventButtonText>Create New</S.CreateEventButtonText>
+        <S.CreateEventButtonText>Share New</S.CreateEventButtonText>
       </S.CreateEventButtonContainer>
     </View>
   );

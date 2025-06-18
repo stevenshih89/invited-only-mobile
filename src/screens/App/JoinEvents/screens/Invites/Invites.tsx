@@ -13,14 +13,18 @@ import ModalLockedAccount from 'components/Modal/ModalLockedAccount/ModalLockedA
 import NewConnectionModal from 'screens/App/IO/components/InviteGuestsEvent/Components/NewConnectionModal/NewConnectionModal';
 import { useAuthStore } from 'src/store/authStore';
 
-const Invites: FC = () => {
+interface Props {
+    fromJoinEvents?: boolean;
+}
+
+const Invites: FC<Props> = ({ fromJoinEvents = false }) => {
     const { data: pendingInvitesEvents, isLoading, updateInvitesData } = useGetInvites();
     const [newConnectionModal, setNewConnectionModal] = useState<components['schemas']['EventData'] | null>(null);
     const { onBoarding } = useAuthStore();
     const whosInScreen = onBoarding?.registrationDetails?.gender === 'man';
 
     // TODO: remove this when implementing connect screen.
-    if (whosInScreen) {
+    if (whosInScreen && !fromJoinEvents) {
         return <WhosIn />;
     }
 

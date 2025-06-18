@@ -1,19 +1,19 @@
-import React, {FC} from 'react';
-import {Image, Text, View} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import React, { FC } from 'react';
+import { Image, Text, View } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import * as S from './ModalWelcomeAboard.style';
 import Button from 'components/Button/Button';
 import WelcomeAboard from 'assets/images/app/welcome-aboard.png';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-import {whiteColor} from 'constants/colors';
+import { Satoshi400, Satoshi500 } from 'constants/fonts';
+import { whiteColor } from 'constants/colors';
 import useUser from 'hooks/user/useUser';
-import {selectIsWelcomeAboardModalShowed, useFirstTimeShowStore} from 'src/store/firstTimeShowStore';
+import { selectIsWelcomeAboardModalShowed, useFirstTimeShowStore } from 'src/store/firstTimeShowStore';
 
 const ModalWelcomeAboard: FC = () => {
     const isWelcomeAboardModalShowed = useFirstTimeShowStore(selectIsWelcomeAboardModalShowed);
 
-    const {user: userData} = useUser();
-    const {setIsWelcomeAboardModalShowed} = useFirstTimeShowStore();
+    const { user: userData } = useUser();
+    const { setIsWelcomeAboardModalShowed } = useFirstTimeShowStore();
 
     const handleCloseModal = () => {
         setIsWelcomeAboardModalShowed(true);
@@ -39,7 +39,7 @@ const ModalWelcomeAboard: FC = () => {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}>
-                                <Image source={WelcomeAboard} style={{flex: 1, marginLeft: -20}} resizeMode="contain" />
+                                <Image source={WelcomeAboard} style={{ flex: 1, marginLeft: -20 }} resizeMode="contain" />
                             </View>
                             <View
                                 style={{

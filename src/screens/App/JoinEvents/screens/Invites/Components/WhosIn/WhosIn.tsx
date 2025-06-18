@@ -30,7 +30,7 @@ const WhosIn = () => {
     } = usePersistentCardSwipeNoEvent<components['schemas']['User']>({
         cardsData: highRankUsers || []
     });
-    const swipeLeft = user?.dailySwipes?.count || 0;
+    const swipeLeft = user?.accountPremium ? '∞' : user?.dailySwipes?.count || 0;
 
     if (!hasCards && hasNextPage && status === 'success') {
         resetDeck();
@@ -68,7 +68,7 @@ const WhosIn = () => {
                             isTopCard={index === cards.length - 1}
                             onReject={() => {
                                 swipeUser(guest.uid || '');
-                                swipeLeft > 0 && handleSwipeLeft()
+                                swipeLeft === '∞' || swipeLeft > 0 && handleSwipeLeft()
                             }}
                             onSuperInvite={() => {
                                 if (!user?.accountPremium) {
@@ -79,14 +79,14 @@ const WhosIn = () => {
                             }}
                             onInvite={() => {
                                 swipeUser(guest.uid || '');
-                                swipeLeft > 0 && handleSwipeRight()
+                                swipeLeft === '∞' || swipeLeft > 0 && handleSwipeRight()
                             }}
                             topIndex={cards?.length - 1}
                         />
                     )
                 })}
             </S.Body>
-            {swipeLeft === 0 && <ModalOutOfSwipes timeToUnlock={addDays(user?.dailySwipes?.lastUpdated || new Date(), 1)} />}
+            {!user?.accountPremium && swipeLeft === 0 && <ModalOutOfSwipes timeToUnlock={addDays(user?.dailySwipes?.lastUpdated || new Date(), 1)} />}
             <ModalLockedAccount />
             <ModalWhisIn />
         </S.Container>
