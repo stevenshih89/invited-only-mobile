@@ -1,6 +1,6 @@
-import {FC, JSX} from 'react';
+import { FC, JSX } from 'react';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
-import {useAddPhotos} from './hooks/useAddPhotos';
+import { useAddPhotos } from './hooks/useAddPhotos';
 import {
   PhotosRow,
   MainPhotoContainer,
@@ -17,7 +17,7 @@ import PencilWhiteIcon from 'assets/images/icons/pencil-white.svg';
 import ModalDefault from 'components/Modal/ModalDefault/ModalDefault';
 
 const AddPhotos: FC = (): JSX.Element => {
-  const {photos, isLoading, handleNext, deleteImage, openLibrary, isModalVisible, handleOpenModal, handleCloseModal, selectedImageId} =
+  const { photos, isLoading, handleNext, deleteImage, openLibrary, isModalVisible, handleOpenModal, handleCloseModal, selectedImageId } =
     useAddPhotos();
 
   return (
@@ -36,17 +36,17 @@ const AddPhotos: FC = (): JSX.Element => {
         <MainPhotoContainer>
           {photos[0].image ? (
             <S.ImageContainer>
-              <S.StyledImageBackground resizeMode="cover" source={{uri: photos[0].image || ''}}>
+              <S.StyledImageBackground resizeMode="cover" source={{ uri: photos[0].image || '' }}>
                 <S.ButtonsContainer>
                   <S.ButtonWrapper>
                     <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                    <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => openLibrary(photos[0].id)}>
+                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(photos[0].id)}>
                       <PencilWhiteIcon />
                     </S.Button>
                   </S.ButtonWrapper>
                   <S.ButtonWrapper>
                     <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                    <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => handleOpenModal(photos[0].id)}>
+                    <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => handleOpenModal(photos[0].id)}>
                       <Close />
                     </S.Button>
                   </S.ButtonWrapper>
@@ -69,17 +69,17 @@ const AddPhotos: FC = (): JSX.Element => {
           <SmallPhotoTop>
             {photos[1].image ? (
               <S.ImageContainer>
-                <S.StyledImageBackground resizeMode="cover" source={{uri: photos[1].image || ''}}>
+                <S.StyledImageBackground resizeMode="cover" source={{ uri: photos[1].image || '' }}>
                   <S.ButtonsContainer>
                     <S.ButtonWrapper>
                       <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                      <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => openLibrary(photos[1].id)}>
+                      <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(photos[1].id)}>
                         <PencilWhiteIcon />
                       </S.Button>
                     </S.ButtonWrapper>
                     <S.ButtonWrapper>
                       <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                      <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => handleOpenModal(photos[1].id)}>
+                      <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => handleOpenModal(photos[1].id)}>
                         <Close />
                       </S.Button>
                     </S.ButtonWrapper>
@@ -101,17 +101,17 @@ const AddPhotos: FC = (): JSX.Element => {
           <SmallPhotoBottom>
             {photos[2].image ? (
               <S.ImageContainer>
-                <S.StyledImageBackground resizeMode="cover" source={{uri: photos[2].image || ''}}>
+                <S.StyledImageBackground resizeMode="cover" source={{ uri: photos[2].image || '' }}>
                   <S.ButtonsContainer>
                     <S.ButtonWrapper>
                       <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                      <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => openLibrary(photos[2].id)}>
+                      <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => openLibrary(photos[2].id)}>
                         <PencilWhiteIcon />
                       </S.Button>
                     </S.ButtonWrapper>
                     <S.ButtonWrapper>
                       <S.ButtonBlur blurType="light" blurAmount={10} reducedTransparencyFallbackColor="white" />
-                      <S.Button activeOpacity={0.7} hitSlop={{left: 15, bottom: 10}} onPress={() => handleOpenModal(photos[2].id)}>
+                      <S.Button activeOpacity={0.7} hitSlop={{ left: 15, bottom: 10 }} onPress={() => handleOpenModal(photos[2].id)}>
                         <Close />
                       </S.Button>
                     </S.ButtonWrapper>

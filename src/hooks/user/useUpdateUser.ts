@@ -1,12 +1,12 @@
-import {useContext} from 'react';
-import {useQueryClient} from '@tanstack/react-query';
-import {Platform} from 'react-native';
+import { useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Platform } from 'react-native';
 import storage from '@react-native-firebase/storage';
-import {components} from '@invited-only/invited-only-api';
-import {logErrorToSentry} from 'helpers/logErrorsToSentry';
-import {showToast, UseToastType} from 'helpers/showToast';
-import {useAuthStore} from 'src/store/authStore';
-import {BackendApiContext} from 'contexts/BackendApiContex';
+import { components } from '@invited-only/invited-only-api';
+import { logErrorToSentry } from 'helpers/logErrorsToSentry';
+import { showToast, UseToastType } from 'helpers/showToast';
+import { useAuthStore } from 'src/store/authStore';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 type User = components['schemas']['User'];
 
@@ -28,8 +28,8 @@ const uploadImage = async (imagePath: string | null | undefined, userId: string)
   } catch (e: any) {
     console.error('Error uploading image:', e);
     logErrorToSentry(e, {
-      tags: {action: 'uploadImage'},
-      extra: {userId, imagePath, filename, uploadUri},
+      tags: { action: 'uploadImage' },
+      extra: { userId, imagePath, filename, uploadUri },
       level: 'error',
     });
     showToast('basic' as UseToastType, `Upload failed: ${e.message || 'Unknown error'}`, 'Upload Error');
@@ -38,10 +38,10 @@ const uploadImage = async (imagePath: string | null | undefined, userId: string)
 };
 
 const useUpdateUser = () => {
-  const {userMetadata} = useAuthStore();
+  const { userMetadata } = useAuthStore();
   const queryClient = useQueryClient();
   const invitedOnlyBackendApi = useContext(BackendApiContext);
-  const {mutate: updateUser, isPending} = invitedOnlyBackendApi.useMutation('patch', '/users/{id}', {
+  const { mutate: updateUser, isPending } = invitedOnlyBackendApi.useMutation('patch', '/users/{id}', {
     onSuccess: user => {
       console.log('User updated successfully', user);
     },
@@ -57,7 +57,7 @@ const useUpdateUser = () => {
           user.photos.map(async (photo: components['schemas']['UserPhoto']) => {
             if (photo.image) {
               const url = await uploadImage(photo.image, userMetadata.uid);
-              const newImage = {image: url, id: photo.id};
+              const newImage = { image: url, id: photo.id };
               return newImage;
             }
             return photo;
@@ -75,7 +75,7 @@ const useUpdateUser = () => {
         },
       });
       queryClient.setQueriesData(
-        {queryKey: ['get', '/users/{id}', {params: {path: {id: userMetadata.uid}}}]},
+        { queryKey: ['get', '/users/{id}', { params: { path: { id: userMetadata.uid } } }] },
         (old: components['schemas']['User']) => {
           return {
             ...old,
@@ -88,7 +88,7 @@ const useUpdateUser = () => {
     }
   };
 
-  return {update, isPending};
+  return { update, isPending };
 };
 
 export default useUpdateUser;

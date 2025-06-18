@@ -15,9 +15,10 @@ interface UseCardGestureProps {
   index: number;
   isTopCard: boolean;
   topIndex: number;
+  raiseShuffle?: boolean
 }
 
-export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, index, isTopCard }: UseCardGestureProps) => {
+export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, index, isTopCard, raiseShuffle }: UseCardGestureProps) => {
   const distanceFromTop = topIndex - index;
   const sign = distanceFromTop % 2 === 0 ? 1 : -1;
   const offsetX = distanceFromTop * 2;
@@ -25,7 +26,7 @@ export const useCardGesture = ({ onSwipeLeft, onSwipeRight, topIndex, enabled, i
   const offsetRotation = distanceFromTop * 0.2;
 
   const initialTranslateX = isTopCard ? 0 : sign * offsetX;
-  const initialTranslateY = isTopCard ? 0 : -offsetY - 2;
+  const initialTranslateY = isTopCard ? 0 : -offsetY - (raiseShuffle ? 30 : 2);
   const initialRotationValue = isTopCard ? 0 : sign * offsetRotation;
 
   const translateX = useSharedValue(initialTranslateX);

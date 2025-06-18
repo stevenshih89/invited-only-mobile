@@ -7,9 +7,6 @@ import Card from 'screens/App/Components/Card/Card';
 import { CardActionsButtons } from 'screens/App/Components/Card/Components/CardActionButtons/CardActionsButtons';
 import useUser from 'hooks/user/useUser';
 
-
-
-
 interface Props {
   isTopCard: boolean;
   onReject: () => void;
@@ -18,9 +15,11 @@ interface Props {
   guest: components['schemas']['User'];
   index: number;
   topIndex: number;
+  overrideShowDots?: boolean
+  raiseShuffle?: boolean
 }
 
-export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex }: Props) => {
+export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex, overrideShowDots, raiseShuffle }: Props) => {
   const { user } = useUser();
   const isLocked = user?.uid && !user?.accountPremium;
 
@@ -36,6 +35,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
       index: index,
       isTopCard: isTopCard,
       topIndex,
+      raiseShuffle,
     });
 
   const onClickReject = () => {
@@ -62,7 +62,7 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
   };
   return (
     <Card
-      showDots={!isLocked}
+      showDots={!isLocked || overrideShowDots}
       distanceFromTop={topIndex - index}
       uid={guest.uid || ''}
       backgroundUrls={guest.photos?.filter(photo => photo.image !== '' && photo.image !== null && photo.image !== undefined) || []}

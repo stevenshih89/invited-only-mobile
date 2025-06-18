@@ -11,6 +11,7 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import Bootsplash from 'react-native-bootsplash';
 import { blackColor } from 'constants/colors';
 
 import Main from 'src';
@@ -62,6 +63,7 @@ const App: FC = (): JSX.Element => {
   if (!isApiReady) {
     return <AppLoader />;
   }
+  Bootsplash.hide();
 
 
   return (

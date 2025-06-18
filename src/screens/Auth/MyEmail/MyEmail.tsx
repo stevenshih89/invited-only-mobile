@@ -1,13 +1,13 @@
-import React, {FC, JSX} from 'react';
+import React, { FC, JSX } from 'react';
 
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
-import {InputContainer} from './MyEmail.style';
-import {useMyEmail} from './hooks/useMyEmail';
+import { InputContainer } from './MyEmail.style';
+import { useMyEmail } from './hooks/useMyEmail';
 import Input from 'components/Inputs/Input';
 
 const MyEmail: FC = (): JSX.Element => {
-  const {email, isValidEmail, handleEmailChange, handleNext, navigation} = useMyEmail();
+  const { email, isValidEmail, handleEmailChange, handleNext } = useMyEmail();
 
   return (
     <CommonAuthLayout

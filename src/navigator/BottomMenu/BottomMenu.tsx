@@ -23,6 +23,7 @@ const BottomMenu: FC = (): JSX.Element => {
   const { setupNotifications } = useMessaging();
   const { onBoarding } = useAuthStore();
   const initialRouteName = onBoarding?.registrationDetails?.gender === 'woman' ? joinEventsPath : IOPath;
+  const whosInScreen = onBoarding?.registrationDetails?.gender === 'man';
   useEffect(() => {
     setupNotifications();
   }, []);
@@ -35,7 +36,7 @@ const BottomMenu: FC = (): JSX.Element => {
         tabBarActiveTintColor: whiteColor,
         tabBarStyle: styles.tabNavigator,
         tabBarIcon: ({ focused }: { focused: boolean }) => TabIcon(focused, route.name),
-        tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name),
+        tabBarLabel: ({ focused }: { focused: boolean }) => TabBarName(focused, route.name, whosInScreen),
       })}
       initialRouteName={initialRouteName}>
       <Tab.Screen name={myEventsPath} component={MyEventsStackScreen} />

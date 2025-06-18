@@ -7,10 +7,12 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import CalendarIcon from 'assets/images/icons/calendar-new.svg';
 
 import { useAuthStore } from 'src/store/authStore';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 const EnterBirthday: FC = (): JSX.Element => {
   const [showAge, setShowAge] = useState<boolean>(false);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
   const [date, setDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -21,12 +23,9 @@ const EnterBirthday: FC = (): JSX.Element => {
   const getDateString = (date: Date) => {
     if (!date) return '';
 
-    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
-
-    const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(adjustedDate.getDate()).padStart(2, '0');
-    const year = String(adjustedDate.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = String(date.getFullYear());
     return `${month}/${day}/${year}`;
   };
 
@@ -45,6 +44,7 @@ const EnterBirthday: FC = (): JSX.Element => {
         birthday: `${month}.${day}.${year}`,
       },
     });
+    writeUnfinishedRegistration({ ...onBoarding.registrationDetails, showAge: showAge, birthday: `${month}.${day}.${year}`, uid: userMetadata.uid, phoneNumber: userMetadata.phoneNumber });
     navigation.navigate('/my-interests');
   };
 

@@ -18,6 +18,7 @@ import BeachParties from 'assets/images/interests/beach-parties.png';
 import Nightclubs from 'assets/images/interests/nightclubs.png';
 import LiveShows from 'assets/images/interests/live-shows.png';
 import Brunches from 'assets/images/interests/brunches.png';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 export interface InterestState {
   id: number;
@@ -29,8 +30,8 @@ export interface InterestState {
 export const useMyInterests = () => {
   const navigation = useAppNavigation();
 
-  const { userMetadata: user } = useAuthStore();
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const { userMetadata: user, onBoarding, setOnBoarding } = useAuthStore();
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
 
   const [listOfInterests, setListOfInterests] = useState<InterestState[]>([
     { id: 0, title: 'Sports', isSelected: false, image: Sports },
@@ -74,6 +75,7 @@ export const useMyInterests = () => {
         interests: reqInterests,
       },
     });
+    writeUnfinishedRegistration({ ...onBoarding.registrationDetails, interests: reqInterests, uid: user.uid, phoneNumber: user.phoneNumber });
     navigation.navigate(myEmailPath as never);
   };
 

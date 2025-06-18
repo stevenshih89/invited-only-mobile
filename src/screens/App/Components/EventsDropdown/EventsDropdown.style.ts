@@ -2,6 +2,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 import FastImage from 'react-native-fast-image';
 import { blackColor, whiteColor } from 'constants/colors';
+import { Satoshi700 } from 'constants/fonts';
 
 export const EventCounter = styled.Text`
   font-size: ${RFValue(12, 932)}px;
@@ -18,9 +19,7 @@ export const DropdownButton = styled.TouchableOpacity`
   height: 40px;
   border-radius: 100px;
   padding-top: 8px;
-  padding-right: 16px;
   padding-bottom: 8px;
-  padding-left: 16px;
   background-color: rgba(255, 255, 255, 0.16);
 `;
 
@@ -40,6 +39,22 @@ export const DropDownAvatar = styled(FastImage)`
   border-radius: 12px;
   background-color: ${whiteColor};
   margin-right: 6px;
+`;
+
+export const IOAvatar = styled.View`
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: ${blackColor};
+  margin-right: 6px;
+  justify-content: center;
+  align-items: center;
+`;
+export const IOAvatarText = styled.Text`
+  font-family: ${Satoshi700};
+  font-size: ${RFValue(10, 932)}px;
+  color: ${whiteColor};
+  text-align: center;
 `;
 
 export const DropdownItem = styled.TouchableOpacity`

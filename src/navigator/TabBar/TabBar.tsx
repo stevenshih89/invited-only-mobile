@@ -1,6 +1,6 @@
-import React, {ReactElement, useState} from 'react';
-import {View, Text} from 'react-native';
-import {Label, IconWrapper} from './styles';
+import React, { ReactElement, useState } from 'react';
+import { View, Text } from 'react-native';
+import { Label, IconWrapper } from './styles';
 import Connect from 'assets/images/tab-bar/connect.svg';
 import ConnectActive from 'assets/images/tab-bar/connect-active.svg';
 
@@ -12,28 +12,28 @@ import JoinEventActive from 'assets/images/tab-bar/join-events-active.svg';
 import JoinEvents from 'assets/images/tab-bar/joint-events.svg';
 import IO from 'assets/images/tab-bar/io.svg';
 import IOActive from 'assets/images/tab-bar/io-active.svg';
-import {IOPath, chatPath, connectPath, joinEventsPath, myEventsPath} from 'constants/pathLocations';
-import {blackColor, grayColor, lightRedColor, whiteColor} from 'constants/colors';
-import {RootStackParamList} from 'typescript/types';
+import { IOPath, chatPath, connectPath, joinEventsPath, myEventsPath } from 'constants/pathLocations';
+import { blackColor, grayColor, lightRedColor, whiteColor } from 'constants/colors';
+import { RootStackParamList } from 'typescript/types';
 
-import {Satoshi700} from 'constants/fonts';
+import { Satoshi700 } from 'constants/fonts';
 import useUser from 'hooks/user/useUser';
 
-export const TabBarName = (focused: boolean, route: string) => {
+export const TabBarName = (focused: boolean, route: string, whosInScreen: boolean) => {
     const getLabel = (): string =>
         ({
-            [connectPath]: 'Invites',
+            [connectPath]: whosInScreen ? 'Who\'s in' : 'Invites',
             [joinEventsPath]: 'Join Events',
             [myEventsPath]: 'Events',
             [chatPath]: 'Chats',
-            [IOPath]: 'Invites',
+            [IOPath]: 'Invite',
         })[route as keyof RootStackParamList];
 
-    return <Label style={{color: focused ? whiteColor : grayColor}}>{getLabel()}</Label>;
+    return <Label style={{ color: focused ? whiteColor : grayColor }}>{getLabel()}</Label>;
 };
 
 export const TabIcon = (focused: boolean, route: string): ReactElement => {
-    const {user} = useUser();
+    const { user } = useUser();
     const [eventsCount, setEventsCount] = useState(0);
     const [eventsCountHost, setEventsCountHost] = useState(0);
     const [newMessage, setNewMessages] = useState(0);
@@ -48,7 +48,7 @@ export const TabIcon = (focused: boolean, route: string): ReactElement => {
         })[route as keyof RootStackParamList];
 
     return (
-        <IconWrapper style={{borderTopColor: focused ? whiteColor : 'transparent'}}>
+        <IconWrapper style={{ borderTopColor: focused ? whiteColor : 'transparent' }}>
             {getIcon()}
             {((route === '/chat' && newMessage > 0) || (eventsCount > 0 && route === '/my-events')) && (
                 <View

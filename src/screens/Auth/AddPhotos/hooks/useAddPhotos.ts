@@ -8,9 +8,11 @@ import { useAuthStore } from 'src/store/authStore';
 import { showToast } from 'helpers/showToast';
 import { isIos } from 'constants/common';
 import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 export const useAddPhotos = () => {
   const navigation = useAppNavigation();
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [photos, setImages] = useState<{ image: null | string; id: number }[]>([
@@ -40,7 +42,7 @@ export const useAddPhotos = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const { onBoarding, setOnBoarding } = useAuthStore();
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
 
   const handleOpenModal = (imageId: number) => {
     setIsModalVisible(true);
@@ -191,6 +193,7 @@ export const useAddPhotos = () => {
           photos: photosList,
         },
       });
+      writeUnfinishedRegistration({ ...onBoarding.registrationDetails, photos: photosList, uid: userMetadata.uid, phoneNumber: userMetadata.phoneNumber });
     } catch (e) {
       console.error(e);
     } finally {

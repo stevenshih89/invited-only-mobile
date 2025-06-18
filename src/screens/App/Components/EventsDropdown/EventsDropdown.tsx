@@ -49,7 +49,8 @@ export const EventsDropdown = ({ events, onEventSelect, selectedEvent, onDropdow
     <S.DropdownContainer>
       <S.DropdownButton onPress={toggleDropdown} disabled={false}>
         <S.DropdownIcon>{events.length > 1 && (dropdownVisible ? <ArrowUp /> : <ArrowDown />)}</S.DropdownIcon>
-        <S.DropDownAvatar source={{ uri: selectedEvent.photos?.[0]?.image }} />
+        {selectedEvent.uid !== 'joined-events' ? <S.DropDownAvatar source={{ uri: selectedEvent.photos?.[0]?.image }} /> : <S.IOAvatar><S.IOAvatarText>IO</S.IOAvatarText></S.IOAvatar>}
+
         <S.DropdownText numberOfLines={1}>{selectedEvent ? selectedEvent.name : 'Select Event'}</S.DropdownText>
         {selectedEvent && selectedEvent.uid !== 'joined-events' && (
           <S.EventCounter>

@@ -8,6 +8,7 @@ import { useAuthStore } from 'src/store/authStore';
 import { invitationCodePath, photoVerifiedPath } from 'constants/pathLocations';
 import MaleExampleSelfie from 'assets/images/auth/example-selfie.png';
 import FemaleExampleSelfie from 'assets/images/auth/female-selfie-example.png';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 export const useVerifyStep = () => {
   const navigation = useAppNavigation();
@@ -15,7 +16,7 @@ export const useVerifyStep = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { requestCameraPermission } = useCameraPermission();
   const { onBoarding, setOnBoarding, userMetadata: user } = useAuthStore();
-
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
   const selfieSource = onBoarding.registrationDetails?.gender === 'man' ? MaleExampleSelfie : FemaleExampleSelfie;
 
   const uploadImage = async (imagePath: string, userId: string | null) => {
@@ -102,6 +103,7 @@ export const useVerifyStep = () => {
           verificationPhoto: imageUser || undefined,
         },
       });
+      writeUnfinishedRegistration({ ...onBoarding.registrationDetails, verificationPhoto: imageUser || undefined, uid: user.uid, phoneNumber: user.phoneNumber });
 
       navigation.navigate(photoVerifiedPath as never);
     } catch (error) {

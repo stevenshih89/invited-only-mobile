@@ -1,13 +1,13 @@
-import {Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import * as S from './CommonAuthLayout.style';
-import {isIos, screenHeight} from 'constants/common';
-import {backgroundGradientColors} from 'constants/colors';
+import { isIos, screenHeight } from 'constants/common';
+import { backgroundGradientColors } from 'constants/colors';
 import BackButton from 'src/sharedComponents/BackButton/BackButton';
 import AuthProgress from 'components/AuthProgress';
 import LogoPrimary2 from 'assets/images/auth/logo-primary-2.svg';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 
 interface CommonAuthLayoutProps {
   withKeyboard?: boolean;
@@ -63,10 +63,10 @@ const CommonAuthLayout: React.FC<CommonAuthLayoutProps> = ({
   }, [onBackPress, navigation]);
 
   const Wrapper = useCallback(
-    ({children: wrChildren}: {children: React.ReactNode}) => {
+    ({ children: wrChildren }: { children: React.ReactNode }) => {
       if (withKeyboard) {
         return (
-          <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{flex: 1}}>
+          <KeyboardAvoidingView behavior={isIos ? 'padding' : 'height'} keyboardVerticalOffset={15} style={{ flex: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{wrChildren}</TouchableWithoutFeedback>
           </KeyboardAvoidingView>
         );
@@ -77,9 +77,9 @@ const CommonAuthLayout: React.FC<CommonAuthLayoutProps> = ({
   );
 
   return (
-    <LinearGradient colors={backgroundGradientColors} start={{x: 0, y: 0}} end={{x: 0, y: 1}} style={{flex: 1}}>
+    <LinearGradient colors={backgroundGradientColors} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <Wrapper>
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{ flex: 1 }}>
           <View
             style={{
               flex: 1,
@@ -96,7 +96,7 @@ const CommonAuthLayout: React.FC<CommonAuthLayoutProps> = ({
                 {startPercentage && endPercentage ? (
                   <AuthProgress startPercentage={startPercentage} endPercentage={endPercentage} animationDuration={animationDuration} />
                 ) : (
-                  <View style={{width: (calculateSize(22) + calculateSize(2)) * 2, height: (calculateSize(22) + calculateSize(2)) * 2}} />
+                  <View style={{ width: (calculateSize(22) + calculateSize(2)) * 2, height: (calculateSize(22) + calculateSize(2)) * 2 }} />
                 )}
               </S.TopRow>
               <S.TitleContainer>

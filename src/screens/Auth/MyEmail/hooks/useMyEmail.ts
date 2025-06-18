@@ -1,20 +1,21 @@
-import {useContext, useState} from 'react';
+import { useContext, useState } from 'react';
 
 import firestore from '@react-native-firebase/firestore';
 
-import {useAuthStore} from 'src/store/authStore';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {isEmailValid} from 'helpers/regExpValidators';
-import {showToast} from 'helpers/showToast';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { useAuthStore } from 'src/store/authStore';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { isEmailValid } from 'helpers/regExpValidators';
+import { showToast } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 export const useMyEmail = () => {
-  const {onBoarding, setOnBoarding} = useAuthStore();
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
   const [email, setEmail] = useState<string>(onBoarding.registrationDetails?.email || '');
   const navigation = useAppNavigation();
-
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
 
   const handleEmailChange = (value: string) => {
     const truncatedText = value.slice(0, 40);
@@ -44,8 +45,9 @@ export const useMyEmail = () => {
       },
       isOnboardingCompleted: false,
     });
+    writeUnfinishedRegistration({ ...onBoarding.registrationDetails, email: email, uid: userMetadata.uid, phoneNumber: userMetadata.phoneNumber });
     navigation.navigate('/welcome-screen');
   };
 
-  return {email, isValidEmail, handleEmailChange, handleNext, navigation};
+  return { email, isValidEmail, handleEmailChange, handleNext, navigation };
 };

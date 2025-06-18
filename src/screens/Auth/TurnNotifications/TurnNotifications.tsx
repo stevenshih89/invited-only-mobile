@@ -1,17 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import { useWriteUnfinishedRegistration } from '../hooks/useUnfinishedRegistration';
 import CommonAuthLayout from '../Layouts/CommonAuthLayout/CommonAuthLayout';
 import * as S from './TurnNotifications.style';
-import {blackColor, whiteColor} from 'constants/colors';
+import { blackColor, whiteColor } from 'constants/colors';
 
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {useAuthStore} from 'src/store/authStore';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { useAuthStore } from 'src/store/authStore';
 import useMessaging from 'hooks/useMessaging';
 
 const TurnNotifications = () => {
   const [notifications, setNotifications] = useState<boolean>(true);
-  const {onBoarding, setOnBoarding} = useAuthStore();
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
   const navigation = useAppNavigation();
-  const {setupNotifications} = useMessaging();
+  const { setupNotifications } = useMessaging();
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
 
   const handleNext = async () => {
     setOnBoarding({
@@ -34,6 +36,7 @@ const TurnNotifications = () => {
     if (notifications) {
       await setupNotifications();
     }
+    writeUnfinishedRegistration({ ...onBoarding.registrationDetails, notificationSettings: { connection: notifications, chat: notifications, superInvite: notifications, superJoin: notifications, joinedEvent: notifications, requests: notifications, myEvents: notifications }, uid: userMetadata.uid, phoneNumber: userMetadata.phoneNumber });
     navigation.navigate('/add-photos');
   };
 
@@ -58,7 +61,7 @@ const TurnNotifications = () => {
         <S.ToggleLabel>Notifications</S.ToggleLabel>
         <S.StyledSwitch
           testID="requests-switch"
-          trackColor={{false: 'rgba(29, 29, 29, 1)', true: whiteColor}}
+          trackColor={{ false: 'rgba(29, 29, 29, 1)', true: whiteColor }}
           thumbColor={notifications ? blackColor : whiteColor}
           value={notifications}
           onValueChange={handleNotificationsChange}

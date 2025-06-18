@@ -6,10 +6,11 @@ import { useAuthStore } from 'src/store/authStore';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import Input from 'components/Inputs/Input';
 import { isName } from 'helpers/regExpValidators';
+import { useWriteUnfinishedRegistration } from 'screens/Auth/hooks/useUnfinishedRegistration';
 
 const EnterName: FC = (): JSX.Element => {
-  const { onBoarding, setOnBoarding } = useAuthStore();
-
+  const { onBoarding, setOnBoarding, userMetadata } = useAuthStore();
+  const { writeUnfinishedRegistration } = useWriteUnfinishedRegistration();
   const [errorInputName, setErrorInputName] = useState<boolean>(false);
   const [name, setName] = useState<string>(onBoarding.registrationDetails?.name || '');
 
@@ -47,6 +48,7 @@ const EnterName: FC = (): JSX.Element => {
       onboardingStep: '/turn-notifications',
       registrationDetails: { ...onBoarding.registrationDetails, name: name },
     });
+    writeUnfinishedRegistration({ ...onBoarding.registrationDetails, name: name, uid: userMetadata.uid, phoneNumber: userMetadata.phoneNumber });
     navigation.navigate('/turn-notifications');
   };
 
