@@ -29,7 +29,6 @@ export const initializeApiClient = async () => {
     console.log('📡 initializeApiClient: Remote Config string length:', remoteConfigString?.length);
     console.log('📡 initializeApiClient: Remote Config string type:', typeof remoteConfigString);
 
-    // Check if the string is empty or null
     if (!remoteConfigString || remoteConfigString.trim() === '') {
       console.warn('⚠️ initializeApiClient: Remote Config BackendPath is empty, using default');
       console.log('🔧 initializeApiClient: Using default BACKEND_BASE_URL:', BACKEND_BASE_URL);

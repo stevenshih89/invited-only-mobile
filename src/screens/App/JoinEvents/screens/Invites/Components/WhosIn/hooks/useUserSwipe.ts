@@ -1,29 +1,18 @@
-import { useCallback, useContext } from "react";
-import { components } from "@invited-only/invited-only-api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useContext, useState } from "react";
 import { BackendApiContext } from "contexts/BackendApiContex";
 import { useAuthStore } from "src/store/authStore";
 
+interface UserSwipe {
+    initialSwipeCount: number;
+}
 
-const useUserSwipe = () => {
+const useUserSwipe = ({ initialSwipeCount }: UserSwipe) => {
     const backendApi = useContext(BackendApiContext);
-    const queryClient = useQueryClient();
+    const [swipeCount, setSwipeCount] = useState(initialSwipeCount);
     const { userMetadata } = useAuthStore();
     const { mutate, isPending: isSwipingUser } = backendApi.useMutation('post', '/swipe/create', {
         onSuccess: () => {
-            queryClient.setQueriesData(
-                { queryKey: ['get', '/users/{id}', { params: { path: { id: userMetadata?.uid } } }] },
-                (old: components['schemas']['User']) => {
-                    return {
-                        ...old,
-                        dailySwipes: {
-                            ...old.dailySwipes,
-                            count: (old.dailySwipes?.count || 0) - 1,
-                            swipedUserId: userMetadata?.uid,
-                        },
-                    };
-                },
-            );
+            setSwipeCount(swipeCount - 1);
         },
     });
     const swipeUser = useCallback((userId: string) => {
@@ -35,7 +24,7 @@ const useUserSwipe = () => {
         });
     }, [mutate]);
 
-    return { swipeUser, isSwipingUser };
+    return { swipeUser, isSwipingUser, swipeCount };
 };
 
 export default useUserSwipe;

@@ -20,6 +20,8 @@ interface AnimatedCardProps {
   showDots?: boolean;
   isTopCard?: boolean;
   distanceFromTop: number;
+  nopeLabelOverride?: string;
+  inviteLabelOverride?: string;
 }
 
 const AnimatedCard: React.FC<AnimatedCardProps> = ({
@@ -34,6 +36,8 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   showDots = true,
   isTopCard,
   distanceFromTop,
+  nopeLabelOverride,
+  inviteLabelOverride,
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const showImageIndexIndicator = isTopCard && showDots && backgroundUrls.length > 1;
@@ -51,10 +55,10 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
           <CardImage imageSource={backgroundUrls[imageIndex]?.image || null} isTopCard={isTopCard} imageIndex={imageIndex} />
           <S.CardGradient colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 0.2)', 'rgba(0, 0, 0, 0.9)']} locations={[0, 0.7, 1]} />
           <S.LikeAnimatedOpacity style={likeOpacityStyle}>
-            <NopeRejectBadge text="Invite" />
+            <NopeRejectBadge text={inviteLabelOverride || 'Invite'} />
           </S.LikeAnimatedOpacity>
           <S.NopeAnimatedOpacity style={nopeOpacityStyle}>
-            <NopeRejectBadge text="Reject" />
+            <NopeRejectBadge text={nopeLabelOverride || 'Reject'} />
           </S.NopeAnimatedOpacity>
           {children}
         </S.StyledAnimatedView>

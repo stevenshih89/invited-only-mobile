@@ -17,9 +17,9 @@ import { useAppNavigation } from 'hooks/useAppNavigation';
 import ModalWhisIn from 'components/Modal/ModalWhisIn/ModalWhisIn';
 
 const WhosIn = () => {
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
     const navigation = useAppNavigation();
-    const { swipeUser } = useUserSwipe();
+    const { swipeUser, swipeCount } = useUserSwipe({ initialSwipeCount: user?.dailySwipes?.count || 0 });
     const { data: highRankUsers, isLoading: isLoadingHighRankUsers, hasNextPage, fetchNextPage, status } = useGetHighRankUsersPagination({ lastDoc: user?.dailySwipes?.swipedUserId || undefined });
     const {
         cards,
@@ -30,16 +30,13 @@ const WhosIn = () => {
     } = usePersistentCardSwipeNoEvent<components['schemas']['User']>({
         cardsData: highRankUsers || []
     });
-    const swipeLeft = user?.accountPremium ? '∞' : user?.dailySwipes?.count || 0;
+    const swipeLeft = user?.accountPremium ? '∞' : swipeCount;
 
     if (!hasCards && hasNextPage && status === 'success') {
         resetDeck();
         fetchNextPage();
     }
 
-    if (isLoadingHighRankUsers) {
-        return <AppLoader />;
-    }
     if (!cards || cards?.length === 0) {
         return <Text>No users to show</Text>;
     }
@@ -54,37 +51,40 @@ const WhosIn = () => {
                     </S.SwipesLeftNumberContainer>
                 </S.SwipesLeftContainer>
             </S.Header>
+
             <S.Body>
-                {cards.map((guest, index) => {
-                    return (
-                        <GuestCard
-                            CardActionsComponent={WhosInActionButtons}
-                            actionButtonsOverride={true}
-                            overrideShowDots={true}
-                            raiseShuffle={true}
-                            key={guest.uid}
-                            guest={guest}
-                            index={index}
-                            isTopCard={index === cards.length - 1}
-                            onReject={() => {
-                                swipeUser(guest.uid || '');
-                                swipeLeft === '∞' || swipeLeft > 0 && handleSwipeLeft()
-                            }}
-                            onSuperInvite={() => {
-                                if (!user?.accountPremium) {
-                                    navigation.navigate('/profile/payment');
-                                } else {
-                                    navigation.navigate('/io');
-                                }
-                            }}
-                            onInvite={() => {
-                                swipeUser(guest.uid || '');
-                                swipeLeft === '∞' || swipeLeft > 0 && handleSwipeRight()
-                            }}
-                            topIndex={cards?.length - 1}
-                        />
-                    )
-                })}
+                {isLoadingHighRankUsers || isLoading ? <AppLoader /> :
+                    cards.map((guest, index) => {
+                        return (
+                            <GuestCard
+                                nopeLabelOverride={'Reject'}
+                                inviteLabelOverride={'Next'}
+                                CardActionsComponent={WhosInActionButtons}
+                                actionButtonsOverride={true}
+                                overrideShowDots={true}
+                                raiseShuffle={true}
+                                key={guest.uid}
+                                guest={guest}
+                                index={index}
+                                isTopCard={index === cards.length - 1}
+                                onReject={() => {
+                                    swipeUser(guest.uid || '');
+                                    if (swipeLeft === '∞' || swipeLeft > 0) {
+                                        handleSwipeLeft()
+                                    }
+                                }}
+                                onSuperInvite={() => { }}
+                                onInvite={() => {
+                                    swipeUser(guest.uid || '');
+                                    if (swipeLeft === '∞' || swipeLeft > 0) {
+                                        handleSwipeRight()
+                                    }
+                                }}
+                                topIndex={cards?.length - 1}
+                            />
+                        )
+                    })
+                }
             </S.Body>
             {!user?.accountPremium && swipeLeft === 0 && <ModalOutOfSwipes timeToUnlock={addDays(user?.dailySwipes?.lastUpdated || new Date(), 1)} />}
             <ModalLockedAccount />

@@ -9,10 +9,9 @@ export interface WhosInActionButtonsProps {
     onInvite?: () => void;
 }
 
-export const WhosInActionButtons = ({ disabled, onReject, onSuperInvite, onInvite }: WhosInActionButtonsProps) => {
+export const WhosInActionButtons = ({ disabled, onReject, onInvite }: WhosInActionButtonsProps) => {
     const navigation = useAppNavigation();
     const { user } = useUser();
-    console.log("render action buttons");
     return (
         <S.ButtonsContainer>
             <S.RejectButton disabled={disabled} onPress={onReject}>
@@ -23,7 +22,7 @@ export const WhosInActionButtons = ({ disabled, onReject, onSuperInvite, onInvit
                 if (!user?.accountPremium) {
                     navigation.navigate('/profile/payment');
                 } else {
-                    navigation.navigate('/io');
+                    navigation.navigate('/event-creating-stack');
                 }
             }}>
                 <S.SuperInviteIcon style={{ opacity: 1 }} />

@@ -55,6 +55,7 @@ const EventCard = ({ onInvite, onReject, isTopCard, event, index, topIndex }: Pr
   const date = event.date ? new Date(event.date) : undefined;
   return (
     <Card
+      inviteLabelOverride={'Join'}
       uid={event.uid}
       backgroundUrls={event.photos || []}
       index={index}

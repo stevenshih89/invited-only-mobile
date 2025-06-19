@@ -20,10 +20,11 @@ interface Props {
   raiseShuffle?: boolean
   actionButtonsOverride?: boolean
   CardActionsComponent?: ComponentType<CardActionsButtonsProps>;
-
+  nopeLabelOverride?: string;
+  inviteLabelOverride?: string;
 }
 
-export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex, overrideShowDots, raiseShuffle, actionButtonsOverride, CardActionsComponent }: Props) => {
+export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite, index, topIndex, overrideShowDots, raiseShuffle, actionButtonsOverride, CardActionsComponent, nopeLabelOverride, inviteLabelOverride }: Props) => {
   const { user } = useUser();
   const isLocked = user?.uid && !user?.accountPremium;
 
@@ -78,7 +79,9 @@ export const GuestCard = ({ isTopCard, guest, onInvite, onReject, onSuperInvite,
       gestureHandler={gestureHandler}
       animatedStyle={animatedStyle}
       likeOpacityStyle={likeOpacityStyle}
-      nopeOpacityStyle={nopeOpacityStyle}>
+      nopeOpacityStyle={nopeOpacityStyle}
+      nopeLabelOverride={nopeLabelOverride}
+      inviteLabelOverride={inviteLabelOverride}>
 
       {((!isLocked && isTopCard) || (actionButtonsOverride && isTopCard)) && (
         <S.CardContent>

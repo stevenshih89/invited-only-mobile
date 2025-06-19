@@ -25,6 +25,8 @@ interface CardProps {
   showDots?: boolean;
   withDarkOverlay?: boolean;
   disabled?: boolean;
+  nopeLabelOverride?: string;
+  inviteLabelOverride?: string;
 }
 
 export const PhysicCard = ({
