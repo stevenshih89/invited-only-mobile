@@ -5,7 +5,7 @@ import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fal
 import EventCardLocked from 'src/assets/images/app/empty-card-fallback-event.png';
 
 const ExploreEventsEmptyFallback = () => {
-  const {user} = useUser();
+  const { user } = useUser();
   const isLocked = user?.uid && !user?.accountReviewed;
 
   return (

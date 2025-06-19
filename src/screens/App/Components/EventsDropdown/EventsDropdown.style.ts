@@ -18,6 +18,8 @@ export const DropdownButton = styled.TouchableOpacity`
   width: 204px;
   height: 40px;
   border-radius: 100px;
+  padding-left: 6px;
+  padding-right: 12px;
   padding-top: 8px;
   padding-bottom: 8px;
   background-color: rgba(255, 255, 255, 0.16);
