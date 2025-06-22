@@ -5,9 +5,11 @@ import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid, Platform, Alert, Linking } from 'react-native';
 
 import useUser from './user/useUser';
+import { useAppNavigation } from './useAppNavigation';
 import { showToast } from 'helpers/showToast';
 import { useNavigationStore } from 'src/store/navigationStore';
 import { BackendApiContext } from 'contexts/BackendApiContex';
+
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
@@ -18,6 +20,7 @@ const useMessaging = () => {
   const { mutate: sendToken } = invitedOnlyBackendApi?.useMutation('post', '/auth/messaging/token') ?? { mutate: async () => { } };
   const { user } = useUser();
   const { isChatScreen } = useNavigationStore();
+  const navigation = useAppNavigation();
 
   const sendTokenToServer = async (token: string) => {
     console.log('Sending FCM token to server:', token);
@@ -118,6 +121,17 @@ const useMessaging = () => {
 
       let toastBody = body;
       let shouldShow = true;
+
+      if (message.notification?.title === 'You got access!') {
+        navigation.navigate('/accepted-user');
+      }
+
+      if (message.notification?.title === 'Your event has been approved!') {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: '/bottom-tabs-stack', params: { screen: '/io' } }],
+        });
+      }
 
       if (message.data) {
         const messageType = message.data.type as string | undefined;

@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {createStackNavigator, StackNavigationOptions} from '@react-navigation/stack';
-import {StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
+import { StyleSheet } from 'react-native';
 
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import NotificationsStackScreen from './NotificationsStackScreen/NotificationsStackScreen';
 import EventRequearHeader from './RequestStackScreen/EventRequearHeader/EventRequearHeader';
-import {ProfileStackScreen} from './ProfileStackScreen/ProfileStackScreen';
+import { ProfileStackScreen } from './ProfileStackScreen/ProfileStackScreen';
 import DeleteButton from './components/DeleteButton';
 import BottomMenu from 'navigator/BottomMenu/BottomMenu';
 
@@ -31,24 +31,24 @@ import ArrowLeft from 'assets/images/icons/arrow-left.svg';
 import Privacy from 'screens/Auth/Privacy/Privacy.tsx';
 import CreateEventFlow from 'screens/App/Flows/CreateEventFlow/CreateEventFlow.tsx';
 import Connect from 'screens/App/Connect/Connect.tsx';
-import {blackColor, whiteColor} from 'constants/colors.ts';
+import { blackColor, whiteColor } from 'constants/colors.ts';
 import ShareSocialLink from 'screens/App/InvitationCode/screens/ShareSocialLink/ShareSocialLink';
 import InvitationCode from 'screens/App/InvitationCode/InvitationCode';
 import useUser from 'hooks/user/useUser';
 import AppLoader from 'screens/App/AppLoader/AppLoader';
-import {useAuthStore} from 'src/store/authStore';
+import { useAuthStore } from 'src/store/authStore';
 import Payment from 'screens/App/Payment/Payment';
-import {ChatWindow} from 'screens/App/Chat/ChatWindow/ChatWindow';
-import {useAppNavigation} from 'hooks/useAppNavigation';
-import {EventRequestsWrapper} from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
-import {RootStackParamList} from 'src/typescript/types';
+import { ChatWindow } from 'screens/App/Chat/ChatWindow/ChatWindow';
+import { useAppNavigation } from 'hooks/useAppNavigation';
+import { EventRequestsWrapper } from 'screens/App/MyEvents/Components/EventRequests/EventRequestsWrapper';
+import { RootStackParamList } from 'src/typescript/types';
 import HeaderBackButton from 'navigator/Components/HeaderBackButton/HeaderBackButton';
-import {Satoshi400} from 'constants/fonts';
+import { Satoshi400 } from 'constants/fonts';
 import UserProfilePreview from 'screens/App/UserProfilePreview/UserProfilePreview';
 import EventProfilePreview from 'screens/App/EventProfilePreview/EventProfilePreview';
 import WelcomeScreen from 'screens/Auth/WelcomeScreen/WelcomeScreen';
 import AcceptedUser from 'screens/App/AcceptedUser/AcceptedUser';
-import {selectIsApprovedUserScreenShowed, useFirstTimeShowStore} from 'src/store/firstTimeShowStore';
+import { selectIsApprovedUserScreenShowed, useFirstTimeShowStore } from 'src/store/firstTimeShowStore';
 
 const AppStack = createStackNavigator<RootStackParamList>();
 
@@ -56,13 +56,13 @@ const EventCreatingStack = createStackNavigator();
 
 const screenOptions = {
     cardOverlayEnabled: true,
-    cardStyle: {backgroundColor: blackColor},
+    cardStyle: { backgroundColor: blackColor },
     gestureEnabled: false,
 } as StackNavigationOptions;
 
 export const DeleteModalContext = React.createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined>(undefined);
 
-const EventCreatingStackScreen = ({route}: {route: any}) => {
+const EventCreatingStackScreen = ({ route }: { route: any }) => {
     const isEditing = route.params?.isEditing;
     const modalState = useState<boolean>(false);
     return (
@@ -72,7 +72,7 @@ const EventCreatingStackScreen = ({route}: {route: any}) => {
                 screenOptions={{
                     headerStyle: styles.headerStyle,
                     headerTitleStyle: styles.headerTitleStyle,
-                    headerBackImage: () => <ArrowLeft style={{marginHorizontal: 12, marginVertical: 10}} />,
+                    headerBackImage: () => <ArrowLeft style={{ marginHorizontal: 12, marginVertical: 10 }} />,
                     headerBackTitleVisible: false,
                     headerTitle: isEditing ? 'Edit Event' : 'Create new event',
                     headerShown: true,
@@ -85,7 +85,7 @@ const EventCreatingStackScreen = ({route}: {route: any}) => {
                     key={eventCreatingStackPath}
                     name={eventCreatingStackPath}
                     component={CreateEventFlow}
-                    initialParams={{isEditing: route.params?.isEditing, event: route.params?.event}}
+                    initialParams={{ isEditing: route.params?.isEditing, event: route.params?.event }}
                 />
             </EventCreatingStack.Navigator>
         </DeleteModalContext.Provider>
@@ -93,11 +93,12 @@ const EventCreatingStackScreen = ({route}: {route: any}) => {
 };
 
 const AppStackScreen = () => {
-    const {userMetadata} = useAuthStore();
-    const {user, isLoading} = useUser();
+    const { userMetadata } = useAuthStore();
+    const { user, isLoading } = useUser();
     const navigation = useAppNavigation();
     const isApprovedUserScreenShowed = useFirstTimeShowStore(selectIsApprovedUserScreenShowed);
 
+    console.log('isApprovedUserScreenShowed', isApprovedUserScreenShowed);
     if (isLoading) {
         return <AppLoader />;
     }
@@ -116,11 +117,11 @@ const AppStackScreen = () => {
 
     const eventRequestsScreenOptions: StackNavigationOptions = {
         headerShown: true,
-        cardStyle: {backgroundColor: blackColor},
-        headerStyle: {backgroundColor: blackColor},
+        cardStyle: { backgroundColor: blackColor },
+        headerStyle: { backgroundColor: blackColor },
         headerTitle: 'Requests',
-        headerTitleStyle: {color: whiteColor},
-        headerBackTitleStyle: {color: whiteColor},
+        headerTitleStyle: { color: whiteColor },
+        headerBackTitleStyle: { color: whiteColor },
         headerTintColor: whiteColor,
         header: () => <EventRequearHeader title="Requests" onBackPress={() => navigation.goBack()} />,
     };
@@ -128,7 +129,7 @@ const AppStackScreen = () => {
     return (
         <AppStack.Navigator
             initialRouteName={initialRoutePath}
-            screenOptions={{headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: {backgroundColor: blackColor}}}>
+            screenOptions={{ headerShown: false, cardOverlayEnabled: true, ...screenOptions, cardStyle: { backgroundColor: blackColor } }}>
             <AppStack.Screen key={bottomTabsStackPath} name={bottomTabsStackPath} component={BottomMenu} />
             <AppStack.Screen key={profileStackPath} name={profileStackPath} component={ProfileStackScreen} />
             <AppStack.Screen key={shareSocialLinkPath} name={shareSocialLinkPath} component={ShareSocialLink} />

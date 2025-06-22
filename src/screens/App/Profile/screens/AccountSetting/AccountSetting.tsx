@@ -12,6 +12,7 @@ import AppLoader from 'screens/App/AppLoader/AppLoader';
 import useUser from 'hooks/user/useUser';
 import useUpdateUser from 'hooks/user/useUpdateUser';
 import { BackendApiContext } from 'contexts/BackendApiContex';
+import { useFirstTimeShowStore } from 'src/store/firstTimeShowStore';
 
 const AccountSetting: FC = () => {
   const { logout } = useAuthStore();
@@ -19,8 +20,13 @@ const AccountSetting: FC = () => {
   const [showLocation, setShowLocation] = useState(user?.showLocation);
   const { update } = useUpdateUser();
   const invitedOnlyBackendApi = useContext(BackendApiContext);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const { setIsFakeSwipeShowed, setIsApprovedUserScreenShowed } = useFirstTimeShowStore();
+
   const { mutate: deleteUser, isPending: isDeletingUser } = invitedOnlyBackendApi.useMutation('delete', '/users/{id}', {
     onSuccess: () => {
+      setIsFakeSwipeShowed(false);
+      setIsApprovedUserScreenShowed(false);
       logout();
     },
     onError: error => {
@@ -28,7 +34,6 @@ const AccountSetting: FC = () => {
     },
   });
 
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   const userPhone = user?.phoneNumber;
   const userEmail = user?.email;

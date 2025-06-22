@@ -5,6 +5,7 @@ import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { createMaterialTopTabNavigator, MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import EventRequests from '../MyEvents/Components/EventRequests/EventRequests';
+import SuccessfullySubmitted from '../InvitationCode/Components/SuccessfullySubmitted/SuccessfullySubmitted';
 import usePersistentCardSwipe from './hooks/usePersistentCardSwipe';
 import { useEventGuests } from './hooks/useEventGuests';
 import IoHeader from './components/IoHeader/IoHeader';
@@ -18,17 +19,17 @@ import ModalStartInviting from 'components/Modal/ModalStartInviting/ModalStartIn
 type GuestUser = components['schemas']['User'];
 
 interface Props {
-    events: components['schemas']['EventData'][];
+  events: components['schemas']['EventData'][];
 }
 
 const IO = ({ events }: Props) => {
   const [selectedEvent, setSelectedEvent] = useState<components['schemas']['EventData']>(events[0]);
 
+  type IoTabs = {
+    '/io/invite': RouteProp<ParamListBase, '/io/invite'>;
+    '/io/requests': RouteProp<ParamListBase, '/io/requests'>;
+  };
 
-    type IoTabs = {
-        '/io/invite': RouteProp<ParamListBase, '/io/invite'>;
-        '/io/requests': RouteProp<ParamListBase, '/io/requests'>;
-    };
 
   const Tab = createMaterialTopTabNavigator<IoTabs>();
   const { guests, isLoading: isGuestsLoading, isFetchingNextPage, hasNextPage, fetchNextPage, status } = useEventGuests(selectedEvent?.uid);
@@ -44,62 +45,63 @@ const IO = ({ events }: Props) => {
     cardsData: guests,
     eventId: selectedEvent?.uid,
   });
-    const handleEventSelect = (event: components['schemas']['EventData']) => {
-        setSelectedEvent(event);
-    };
+  const handleEventSelect = (event: components['schemas']['EventData']) => {
+    setSelectedEvent(event);
+  };
 
-    if (!hasCards && status === 'success' && hasNextPage) {
-        resetDeck(selectedEvent?.uid ?? '');
-        fetchNextPage();
-    }
+  if (!hasCards && status === 'success' && hasNextPage) {
+    resetDeck(selectedEvent?.uid ?? '');
+    fetchNextPage();
+  }
 
-    const CustomTabBar = (props: MaterialTopTabBarProps) => (
-        <>
-            <IoHeader
-                events={events}
-                selectedEvent={selectedEvent}
-                onEventSelect={handleEventSelect}
-                onRequestPress={() => props.navigation.navigate('/io/requests')}
-                onDropdownChange={() => props.navigation.navigate('/io/invite')}
-                attendingGuests={attendingGuests || []}
-            />
-        </>
-    );
+  const CustomTabBar = (props: MaterialTopTabBarProps) => (
+    <>
+      <IoHeader
+        events={events}
+        selectedEvent={selectedEvent}
+        onEventSelect={handleEventSelect}
+        onRequestPress={() => props.navigation.navigate('/io/requests')}
+        onDropdownChange={() => props.navigation.navigate('/io/invite')}
+        attendingGuests={attendingGuests || []}
+      />
+    </>
+  );
 
-    return (
-        <BottomSheetModalProvider>
-            <DefaultBackground>
-                <S.IoContainer>
-                    <Tab.Navigator
-                        style={S.tabNavigatorStyle}
-                        initialRouteName="/io/invite"
-                        tabBar={props => <CustomTabBar {...props} />}
-                        screenOptions={{
-                            swipeEnabled: false,
-                        }}>
-                        <Tab.Screen name="/io/invite">
-                            {() => (
-                                <InviteGuestsEvent
-                                    isLockedProfile={false}
-                                    selectedEvent={selectedEvent}
-                                    cardsToShow={currentEventCards}
-                                    allCards={guests}
-                                    isLoading={isGuestsLoading || isFetchingNextPage}
-                                    onSwipeLeft={handleSwipeLeft}
-                                    onSwipeRight={handleSwipeRight}
-                                    onSuperInvite={handleSuperInvite}
-                                />
-                            )}
-                        </Tab.Screen>
-                        <Tab.Screen name="/io/requests">{() => <EventRequests eventId={selectedEvent?.uid || ''} />}</Tab.Screen>
-                    </Tab.Navigator>
-                </S.IoContainer>
-                <ModalStartInviting />
-                {/* {isGuestsLoading || isFetchingNextPage || (!hasCards && guests.length > 0) ? null : <ModalLockedAccount />} */}
-                <ModalLockedAccount />
-            </DefaultBackground>
-        </BottomSheetModalProvider>
-    );
+  return (
+    <BottomSheetModalProvider>
+      <DefaultBackground>
+        <S.IoContainer>
+          <Tab.Navigator
+            style={S.tabNavigatorStyle}
+            initialRouteName="/io/invite"
+            tabBar={props => <CustomTabBar {...props} />}
+            screenOptions={{
+              swipeEnabled: false,
+            }}>
+            <Tab.Screen name="/io/invite">
+              {() => (
+                <InviteGuestsEvent
+                  isLockedProfile={false}
+                  selectedEvent={selectedEvent}
+                  cardsToShow={currentEventCards}
+                  allCards={guests}
+                  isLoading={isGuestsLoading || isFetchingNextPage}
+                  onSwipeLeft={handleSwipeLeft}
+                  onSwipeRight={handleSwipeRight}
+                  onSuperInvite={handleSuperInvite}
+                />
+              )}
+            </Tab.Screen>
+            <Tab.Screen name="/io/requests">{() => <EventRequests eventId={selectedEvent?.uid || ''} />}</Tab.Screen>
+          </Tab.Navigator>
+        </S.IoContainer>
+        <ModalStartInviting />
+        {/* {isGuestsLoading || isFetchingNextPage || (!hasCards && guests.length > 0) ? null : <ModalLockedAccount />} */}
+        <ModalLockedAccount />
+      </DefaultBackground>
+    </BottomSheetModalProvider>
+  );
+
 };
 
 export default gestureHandlerRootHOC(IO);

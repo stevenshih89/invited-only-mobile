@@ -23,7 +23,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.10.4</string>
+	<string>0.10.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>bugsnag</key>
@@ -62,7 +62,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Invited Only</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
