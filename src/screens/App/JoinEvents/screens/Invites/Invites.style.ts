@@ -3,9 +3,10 @@ import { screenHeight } from 'constants/common';
 
 export const Container = styled.View`
   flex: 1;
-  justify-content: center;
-  align-items: center;
   height: ${screenHeight * 0.7}px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-horizontal: 16px;
 `;
 
 export const InviteCardContainer = styled.View`

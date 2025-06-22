@@ -12,44 +12,34 @@ interface ToggleInvitationStatusDropdownProps {
 }
 
 // Example statuses - replace with actual data from props or context
-const hostStatuses: {status: string; description: string}[] = [
-  {status: 'Invited, Connection Made', description: 'Invitation received and connection is established'},
-  {status: 'Host Approve', description: 'You need to approve the guest'},
-  {status: 'Pending Guest Confirmation', description: 'The guest needs to accept the invitation'},
-  {status: 'Attending Confirmed', description: 'The guest has accepted the invitation'},
+const hostStatuses: { status: string; description: string }[] = [
+  { status: 'Invited!', description: 'Host and Guest swiped — connection established.' },
+  { status: 'Host Approval', description: 'Host reviews and approves the guest.' },
+  { status: 'Guest Confirmation', description: 'Guest confirms attendance — you’re all set.' },
 ];
-const guestStatuses: {status: string; description: string}[] = [
-  {status: 'Invited, Connection Made', description: 'Invitation received and connection is established'},
-  {status: 'Guest Approve', description: 'You need to approve the host'},
-  {status: 'Pending Host Confirmation', description: 'The host needs to accept the invitation'},
-  {status: 'Attending Confirmed', description: 'The host has accepted the invitation'},
+const guestStatuses: { status: string; description: string }[] = [
+  { status: 'Invited!', description: 'Host and Guest swiped — connection established.' },
+  { status: 'Host Approval', description: 'Host reviews and approves the guest.' },
+  { status: 'Guest Confirmation', description: 'Event owner approved you; now accept the invite' },
 ];
 export const getCurrentStatus = (invitationStatus: string, isJoinedEvent: boolean) => {
   if (!isJoinedEvent) {
     switch (invitationStatus) {
       case 'connectionInitiated':
         return 1;
-      case 'hostApprovePendingForGuest':
-        return 2;
       case 'guestApprovePendingForHost':
         return 2;
       case 'attendingComplete':
-        return 4;
-      case 'completed':
-        return 5;
-      case 'rejected':
-        return 6;
+        return 3;
     }
   } else {
     switch (invitationStatus) {
       case 'connectionInitiated':
         return 1;
-      case 'guestApprovePendingForHost':
-        return 2;
       case 'hostApprovePendingForGuest':
         return 2;
       case 'attendingComplete':
-        return 4;
+        return 3;
     }
   }
 };

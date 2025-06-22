@@ -5,10 +5,9 @@ import { components } from '@invited-only/invited-only-api';
 
 import * as S from './ChatWindowHeader.style';
 import { ToggleInvitationStatusDropdown } from './ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
-import { ApproveActionButton } from './ApproveActionButton/ApproveActionButton';
 import useConnectionRealtimeStatus from './hooks/useConnectionRealtimeStatus';
+import { InvitationActionButton } from 'components/InvitationActionButton/InvitationActionButton';
 import ArrowLeft from 'assets/images/icons/arrow-left.svg';
-import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
 import DotsHorizontalIcon from 'assets/images/icons/dots-horizontal.svg';
 import { useAppNavigation } from 'hooks/useAppNavigation';
 import { whiteColor } from 'constants/colors';
@@ -16,6 +15,7 @@ import { useAuthStore } from 'src/store/authStore';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
 import IOImage from 'src/assets/images/app/IO.png'
 import { BackendApiContext } from 'contexts/BackendApiContex';
+import { getInvitationStatusDescription } from 'helpers/invitationStatusDescription';
 
 interface ChatWindowHeaderProps {
   chat: components['schemas']['Chat'];
@@ -36,40 +36,6 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
 
   const toggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
-  };
-
-  const renderActionButtonForHost = () => {
-    if (invitationStatus === 'attendingComplete') {
-      return <ConfirmedBadge />;
-    }
-    if (invitationStatus === 'hostApprovePendingForGuest') {
-      return (
-        <S.WaitingContainer>
-          <ActivityIndicator size="small" color={whiteColor} />
-          <S.WaitingText>Waiting</S.WaitingText>
-        </S.WaitingContainer>
-      );
-    }
-    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'guestApprovePendingForHost') {
-      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} updateConnectionStatusData={updateConnectionStatusData} />;
-    }
-  };
-
-  const renderActionButtonForGuest = () => {
-    if (invitationStatus === 'attendingComplete') {
-      return <ConfirmedBadge />;
-    }
-    if (invitationStatus === 'guestApprovePendingForHost') {
-      return (
-        <S.WaitingContainer>
-          <ActivityIndicator size="small" color={whiteColor} />
-          <S.WaitingText>Waiting</S.WaitingText>
-        </S.WaitingContainer>
-      );
-    }
-    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
-      return <ApproveActionButton chat={chat} isJoinedEvent={isJoinedEvent || false} updateConnectionStatusData={updateConnectionStatusData} />;
-    }
   };
 
   return (
@@ -107,16 +73,23 @@ export const ChatWindowHeader = ({ chat, isJoinedEvent, handleOpenModalChatHost,
                 <S.StyledArrow isOpen={isDropdownVisible} />
                 <S.InvitationStatusTextContainer>
                   <S.InvitationStatusText>Invitation Status</S.InvitationStatusText>
-                  <S.InvitationStatusDescription>Track status from invitation to approval</S.InvitationStatusDescription>
+                  <S.InvitationStatusDescription>{getInvitationStatusDescription(invitationStatus, isJoinedEvent || false)}</S.InvitationStatusDescription>
                 </S.InvitationStatusTextContainer>
               </S.InvitationLeftContainer>
               <S.InvitationRightContainer>
                 {isLoading ? (
                   <ActivityIndicator size="small" color={whiteColor} />
-                ) : isJoinedEvent ? (
-                  renderActionButtonForGuest()
                 ) : (
-                  renderActionButtonForHost()
+                  <InvitationActionButton
+                    connectionDetails={{
+                      guestId: chat.guestId || '',
+                      hostId: chat.hostId || '',
+                      eventId: chat.eventId || '',
+                    }}
+                    isJoinedEvent={isJoinedEvent || false}
+                    invitationStatus={invitationStatus || ''}
+                    updateConnectionStatusData={updateConnectionStatusData}
+                  />
                 )}
               </S.InvitationRightContainer>
             </S.InvitationStatusContainer>

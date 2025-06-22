@@ -61,7 +61,6 @@ export const RequestCard = ({ guestReuestUid, connectionDetails, updateEventAtte
                                         eventId: connectionDetails.eventId || '',
                                         hostId: connectionDetails?.hostId || ''
                                     });
-                                    console.log('setting new Connection Modal', data);
                                     setNewConnectionModal({ ...data });
                                 }}>
                                     <S.InviteButtonContainer>

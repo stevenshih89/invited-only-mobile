@@ -16,10 +16,8 @@ export const ApproveActionButton: React.FC<ApproveActionButtonProps> = ({
   event,
   guestId,
   isJoinedEvent,
-  updateConnectionStatusData,
   ...rest
 }) => {
-  console.log('isJoinedEvent', isJoinedEvent);
   const invitedOnlyBackendApi = useContext(BackendApiContext);
   const { mutate: approveEvent } = invitedOnlyBackendApi.useMutation('patch', '/eventAttendees', {
     onSuccess: response => {

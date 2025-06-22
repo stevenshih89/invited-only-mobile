@@ -6,13 +6,15 @@ import * as S from './EventListItem.style';
 import EventListItemHostContent from './EventListItemHostContent/EventListItemHostContent';
 import EventListItemGuestConetnt from './EventListItemGuestConetnt/EventListItemGuestConetnt';
 import useConnectionRealtimeStatus from './hooks/useConnectionRealtimeStatus';
-import { ApproveActionButton } from './ApproveActionButton/ApproveActionButton';
-import { ToggleInvitationStatusDropdown } from './ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
+
 import { Satoshi500 } from 'constants/fonts';
 import { whiteColor } from 'constants/colors';
 import { useAuthStore } from 'src/store/authStore';
 import { useInvitationStatus } from 'hooks/useInvitationStatus';
-import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
+import { getInvitationStatusDescription } from 'helpers/invitationStatusDescription';
+
+import { ToggleInvitationStatusDropdown } from 'screens/App/Chat/ChatWindow/ChatWindowHeader/ToggleInvitationStatusDropdown/ToggleInvitationStatusDropdown';
+import { InvitationActionButton } from 'components/InvitationActionButton/InvitationActionButton';
 
 interface EventListItemProps {
   event: components['schemas']['EventData'];
@@ -48,45 +50,6 @@ const EventListItem: React.FC<EventListItemProps> = ({
     setIsDropdownVisible(prev => !prev);
   };
 
-  const renderActionButtonForGuest = () => {
-    if (invitationStatus === 'attendingComplete') {
-      return <ConfirmedBadge />;
-    }
-    if (invitationStatus === 'guestApprovePendingForHost') {
-      return (
-        <S.WaitingContainer>
-          <ActivityIndicator size="small" color={whiteColor} />
-          <S.WaitingText>Waiting</S.WaitingText>
-        </S.WaitingContainer>
-      );
-    }
-    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
-      return (
-        <ApproveActionButton
-          event={event}
-          guestId={userMetadata.uid || ''}
-          isJoinedEvent={true}
-          updateConnectionStatusData={updateConnectionStatusData}
-        />
-      );
-    }
-  };
-
-  const getInvitationStatusDescription = (invitationStatus: string | undefined) => {
-    if (!invitationStatus) {
-      return '';
-    }
-    if (invitationStatus === 'attendingComplete') {
-      return 'You are attending this event';
-    }
-    if (invitationStatus === 'guestApprovePendingForHost') {
-      return 'Host approval needed';
-    }
-    if (invitationStatus === 'connectionInitiated' || invitationStatus === 'hostApprovePendingForGuest') {
-      return 'Your confirmation needed';
-    }
-  };
-
   return (
     <S.CardContainer onPress={handlePress} activeOpacity={0.8}>
       <S.HeaderCollapsedContainer>
@@ -96,11 +59,20 @@ const EventListItem: React.FC<EventListItemProps> = ({
               <S.StyledArrow isOpen={isDropdownVisible} />
               <S.InvitationStatusTextContainer>
                 <S.InvitationStatusText>Invitation Status</S.InvitationStatusText>
-                <S.InvitationStatusDescription>{getInvitationStatusDescription(invitationStatus)}</S.InvitationStatusDescription>
+                <S.InvitationStatusDescription>{getInvitationStatusDescription(invitationStatus, true)}</S.InvitationStatusDescription>
               </S.InvitationStatusTextContainer>
             </S.InvitationLeftContainer>
             <S.InvitationRightContainer>
-              {isLoading ? <ActivityIndicator size="small" color={whiteColor} /> : renderActionButtonForGuest()}
+              {isLoading ? <ActivityIndicator size="small" color={whiteColor} /> : <InvitationActionButton
+                connectionDetails={{
+                  guestId: userMetadata.uid || '',
+                  hostId: event.hostId ?? '',
+                  eventId: event.uid ?? '',
+                }}
+                isJoinedEvent={true}
+                invitationStatus={invitationStatus || ''}
+                updateConnectionStatusData={updateConnectionStatusData}
+              />}
             </S.InvitationRightContainer>
           </S.InvitationStatusContainer>}
         </TouchableOpacity>

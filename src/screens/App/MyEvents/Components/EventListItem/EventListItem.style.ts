@@ -185,3 +185,12 @@ export const WaitingText = styled.Text`
   line-height: 16.94px;
   color: ${whiteColor};
 `;
+
+export const DropdownWrapper = styled.View`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(12, 12, 12, 1);
+`;

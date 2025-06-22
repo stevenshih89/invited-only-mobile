@@ -19,7 +19,6 @@ const EventRequests = ({ eventId }: EventRequestsProps) => {
   const navigation = useAppNavigation();
   const inset = useSafeAreaInsets();
   const [newConnectionModal, setNewConnectionModal] = useState<components['schemas']['User'] | null>(null);
-  console.log('current newConnectionModal', newConnectionModal);
 
   if (isLoading) {
     return <S.Container style={{ paddingTop: inset.top }}>
@@ -27,7 +26,7 @@ const EventRequests = ({ eventId }: EventRequestsProps) => {
     </S.Container>;
   }
 
-  if (pendingSwipeRequests.length === 0) {
+  if (pendingSwipeRequests.length === 0 && newConnectionModal === null) {
     return <EventRequestEmptyFallback />;
   }
 
