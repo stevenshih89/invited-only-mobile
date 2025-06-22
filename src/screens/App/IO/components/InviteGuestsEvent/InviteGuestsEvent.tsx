@@ -21,169 +21,178 @@ import ModalLockedEvent from 'components/Modal/ModalLockedEvent/ModalLockedEvent
 type GuestUser = components['schemas']['User'];
 
 interface InviteGuestsEventProps {
-  selectedEvent: components['schemas']['EventData'];
-  cardsToShow: GuestUser[];
-  isLoading: boolean;
-  onSwipeLeft: () => void;
-  onSwipeRight: () => void;
-  onSuperInvite: () => void;
-  allCards: GuestUser[];
-  isLockedProfile: boolean;
+    selectedEvent: components['schemas']['EventData'];
+    cardsToShow: GuestUser[];
+    isLoading: boolean;
+    onSwipeLeft: () => void;
+    onSwipeRight: () => void;
+    onSuperInvite: () => void;
+    allCards: GuestUser[];
+    isLockedProfile: boolean;
+    isScrollEnabled?: boolean;
 }
 
 const InviteGuestsEvent = ({
-  selectedEvent,
-  cardsToShow,
-  isLoading,
-  onSwipeLeft,
-  onSwipeRight,
-  onSuperInvite,
-  allCards,
-  isLockedProfile,
+    selectedEvent,
+    cardsToShow,
+    isLoading,
+    onSwipeLeft,
+    onSwipeRight,
+    onSuperInvite,
+    allCards,
+    isLockedProfile,
+    isScrollEnabled = true,
 }: InviteGuestsEventProps) => {
-  const hasCards = cardsToShow.length > 0;
-  const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
-  const {userMetadata} = useAuthStore.getState();
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const handleBlockAndReport = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-  const {createEventAttendee, swipeDataRes} = useSwipeCardAction();
-  const {isModalVisible, closeModal, matchedCard} = useNewConnectionModal({swipeDataRes, allCards, isEvent: false});
-  const scrollRef = useRef<ScrollView>(null);
+    const hasCards = cardsToShow.length > 0;
+    const currentCard: GuestUser | undefined = hasCards ? cardsToShow[cardsToShow.length - 1] : undefined;
+    const {userMetadata} = useAuthStore.getState();
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const handleBlockAndReport = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+    const {createEventAttendee, swipeDataRes} = useSwipeCardAction();
+    const {isModalVisible, closeModal, matchedCard} = useNewConnectionModal({swipeDataRes, allCards, isEvent: false});
+    const scrollRef = useRef<ScrollView>(null);
 
-  const scrollToTop = () => {
-    return new Promise<void>(resolve => {
-      scrollRef.current?.scrollTo({y: 0, animated: true});
-      setTimeout(resolve, 700);
-    });
-  };
+    const scrollToTop = () => {
+        return new Promise<void>(resolve => {
+            scrollRef.current?.scrollTo({y: 0, animated: true});
+            setTimeout(resolve, 700);
+        });
+    };
 
-  const onReject = async (withScroll = false) => {
-    if (withScroll) {
-      await scrollToTop();
-    }
+    const onReject = async (withScroll = false) => {
+        if (withScroll) {
+            await scrollToTop();
+        }
 
-    onSwipeLeft();
-    createEventAttendee({
-      body: {
-        guestId: currentCard?.uid || '',
-        hostId: selectedEvent.hostId || '',
-        eventId: selectedEvent.uid,
-        hostSwipe: 'left',
-      },
-    });
-  };
+        onSwipeLeft();
+        if (!isLockedProfile) {
+            createEventAttendee({
+                body: {
+                    guestId: currentCard?.uid || '',
+                    hostId: selectedEvent.hostId || '',
+                    eventId: selectedEvent.uid,
+                    hostSwipe: 'left',
+                },
+            });
+        }
+    };
 
-  const onPressSuperInvite = async (withScroll = false) => {
-    if (withScroll) {
-      await scrollToTop();
-    }
-    onSuperInvite();
-    createEventAttendee({
-      body: {
-        guestId: currentCard?.uid || '',
-        hostId: selectedEvent.hostId || '',
-        eventId: selectedEvent.uid,
-        hostSwipe: 'right',
-        superInvite: true,
-      },
-    });
-  };
+    const onPressSuperInvite = async (withScroll = false) => {
+        if (withScroll) {
+            await scrollToTop();
+        }
+        onSuperInvite();
+        if (!isLockedProfile) {
+            createEventAttendee({
+                body: {
+                    guestId: currentCard?.uid || '',
+                    hostId: selectedEvent.hostId || '',
+                    eventId: selectedEvent.uid,
+                    hostSwipe: 'right',
+                    superInvite: true,
+                },
+            });
+        }
+    };
 
-  const onInvite = async (withScroll = false) => {
-    if (withScroll) {
-      await scrollToTop();
-    }
-    onSwipeRight();
-    createEventAttendee({
-      body: {
-        guestId: currentCard?.uid || '',
-        hostId: selectedEvent.hostId || '',
-        eventId: selectedEvent.uid,
-        hostSwipe: 'right',
-        superInvite: false,
-      },
-    });
-  };
+    const onInvite = async (withScroll = false) => {
+        if (withScroll) {
+            await scrollToTop();
+        }
+        onSwipeRight();
+        if (!isLockedProfile) {
+            createEventAttendee({
+                body: {
+                    guestId: currentCard?.uid || '',
+                    hostId: selectedEvent.hostId || '',
+                    eventId: selectedEvent.uid,
+                    hostSwipe: 'right',
+                    superInvite: false,
+                },
+            });
+        }
+    };
 
-  const renderCards = () => {
-    if (isLoading) {
-      return <AppLoader />;
-    }
-    if (!hasCards) {
-      return <S.NoCardsText>No more guests to show.</S.NoCardsText>;
-    }
+    const renderCards = () => {
+        if (isLoading) {
+            return <AppLoader />;
+        }
+        if (!hasCards) {
+            return <S.NoCardsText>No more guests to show.</S.NoCardsText>;
+        }
 
-    return cardsToShow.map((guest, index) => (
-      <GuestCard
-        key={guest.uid}
-        guest={guest}
-        index={index}
-        isTopCard={index === cardsToShow.length - 1}
-        onReject={onReject}
-        onSuperInvite={onSuperInvite}
-        onInvite={onInvite}
-        topIndex={cardsToShow.length - 1}
-      />
-    ));
-  };
-  return (
-    <View>
-      {selectedEvent && <ModalLockedEvent event={selectedEvent} />}
-      <ScrollView ref={scrollRef} scrollEnabled={!isLockedProfile}>
-        <S.Container>
-          <S.CardContainer>{renderCards()}</S.CardContainer>
-          {!isLoading && currentCard && (
-            <>
-              <GuestBasicInfoCard
-                homeAddress={currentCard?.homeAddress || ''}
-                work={currentCard?.work || ({title: '', description: ''} as components['schemas']['Work'])}
-                gender={currentCard?.gender || 'other'}
-                listOfInterestsImages={currentCard?.interests || []}
-              />
+        return cardsToShow.map((guest, index) => (
+            <GuestCard
+                key={guest.uid}
+                guest={guest}
+                index={index}
+                isTopCard={index === cardsToShow.length - 1}
+                onReject={onReject}
+                onSuperInvite={onSuperInvite}
+                onInvite={onInvite}
+                topIndex={cardsToShow.length - 1}
+            />
+        ));
+    };
 
-              <GuestBioCard bio={currentCard?.bio || ''} />
-              <GuestLanguagesCard languages={currentCard?.languages || []} />
-              <GuestPhotosList photosList={currentCard?.photos || []} />
-              <GuestActionButtons
-                onReject={() => {
-                  onReject(true);
-                }}
-                onSuperInvite={() => {
-                  onPressSuperInvite(true);
-                }}
-                onInvite={() => {
-                  onInvite(true);
-                }}
-              />
-              <S.BlockAndReportContainer>
-                <S.BlockAndReportButton onPress={handleBlockAndReport}>
-                  <S.BlockText>Block and Report</S.BlockText>
-                </S.BlockAndReportButton>
-              </S.BlockAndReportContainer>
-            </>
-          )}
-        </S.Container>
-        {matchedCard && (
-          <NewConnectionModal
-            cardData={matchedCard}
-            visible={isModalVisible}
-            onClose={closeModal}
-            isEvent={false}
-            eventId={selectedEvent.uid}
-          />
-        )}
-      </ScrollView>
-      <ModalReport
-        ref={bottomSheetModalRef}
-        uidSender={userMetadata?.uid || ''}
-        uid={currentCard?.uid || ''}
-        userData={currentCard}
-        onSubmit={onReject}
-      />
-    </View>
-  );
+    return (
+        <View>
+            {selectedEvent && <ModalLockedEvent event={selectedEvent} />}
+            <ScrollView ref={scrollRef} scrollEnabled={isScrollEnabled}>
+                <S.Container>
+                    <S.CardContainer>{renderCards()}</S.CardContainer>
+                    {!isLoading && currentCard && (
+                        <>
+                            <GuestBasicInfoCard
+                                homeAddress={currentCard?.homeAddress || ''}
+                                work={currentCard?.work || ({title: '', description: ''} as components['schemas']['Work'])}
+                                gender={currentCard?.gender || 'other'}
+                                listOfInterestsImages={currentCard?.interests || []}
+                            />
+
+                            <GuestBioCard bio={currentCard?.bio || ''} />
+                            <GuestLanguagesCard languages={currentCard?.languages || []} />
+                            <GuestPhotosList photosList={currentCard?.photos || []} />
+                            <GuestActionButtons
+                                onReject={() => {
+                                    onReject(true);
+                                }}
+                                onSuperInvite={() => {
+                                    onPressSuperInvite(true);
+                                }}
+                                onInvite={() => {
+                                    onInvite(true);
+                                }}
+                            />
+                            <S.BlockAndReportContainer>
+                                <S.BlockAndReportButton onPress={handleBlockAndReport}>
+                                    <S.BlockText>Block and Report</S.BlockText>
+                                </S.BlockAndReportButton>
+                            </S.BlockAndReportContainer>
+                        </>
+                    )}
+                </S.Container>
+                {matchedCard && (
+                    <NewConnectionModal
+                        cardData={matchedCard}
+                        visible={isModalVisible}
+                        onClose={closeModal}
+                        isEvent={false}
+                        eventId={selectedEvent.uid}
+                    />
+                )}
+            </ScrollView>
+            <ModalReport
+                ref={bottomSheetModalRef}
+                uidSender={userMetadata?.uid || ''}
+                uid={currentCard?.uid || ''}
+                userData={currentCard}
+                onSubmit={onReject}
+            />
+        </View>
+    );
 };
 
 export default InviteGuestsEvent;

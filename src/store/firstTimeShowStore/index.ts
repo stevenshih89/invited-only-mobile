@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import {create} from 'zustand';
+import {persist, createJSONStorage} from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FirstTimeShowState {
@@ -9,12 +9,14 @@ interface FirstTimeShowState {
     isStorageReady: boolean;
     isApprovedUserScreenShowed: boolean;
     isWhosInModalShowed: boolean;
+    isFakeSwipeShowed: boolean;
     setIsStorageReady: (isStorageReady: boolean) => void;
     setIsDemoVideoWatched: (isDemoVideoWatched: boolean) => void;
     setIsWelcomeAboardModalShowed: (isShowed: boolean) => void;
     setIsStartInvitingModalShowed: (isShowed: boolean) => void;
     setIsApprovedUserScreenShowed: (isShowed: boolean) => void;
     setIsWhosInModalShowed: (isShowed: boolean) => void;
+    setIsFakeSwipeShowed: (isShowed: boolean) => void;
     reset: () => void;
 }
 
@@ -33,12 +35,14 @@ const getInitialState = (
     isStorageReady: false,
     isApprovedUserScreenShowed: false,
     isWhosInModalShowed: false,
-    setIsStorageReady: () => { },
-    setIsDemoVideoWatched: isDemoVideoWatched => set({ isDemoVideoWatched: isDemoVideoWatched ?? false }),
-    setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({ isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false }),
-    setIsStartInvitingModalShowed: isStartInvitingModalShowed => set({ isStartInvitingModalShowed: isStartInvitingModalShowed ?? false }),
-    setIsApprovedUserScreenShowed: isApprovedUserScreenShowed => set({ isApprovedUserScreenShowed: isApprovedUserScreenShowed ?? false }),
-    setIsWhosInModalShowed: isWhosInModalShowed => set({ isWhosInModalShowed: isWhosInModalShowed ?? false }),
+    isFakeSwipeShowed: false,
+    setIsStorageReady: () => {},
+    setIsDemoVideoWatched: isDemoVideoWatched => set({isDemoVideoWatched: isDemoVideoWatched ?? false}),
+    setIsWelcomeAboardModalShowed: isWelcomeAboardModalShowed => set({isWelcomeAboardModalShowed: isWelcomeAboardModalShowed ?? false}),
+    setIsStartInvitingModalShowed: isStartInvitingModalShowed => set({isStartInvitingModalShowed: isStartInvitingModalShowed ?? false}),
+    setIsApprovedUserScreenShowed: isApprovedUserScreenShowed => set({isApprovedUserScreenShowed: isApprovedUserScreenShowed ?? false}),
+    setIsWhosInModalShowed: isWhosInModalShowed => set({isWhosInModalShowed: isWhosInModalShowed ?? false}),
+    setIsFakeSwipeShowed: isFakeSwipeShowed => set({isFakeSwipeShowed: isFakeSwipeShowed ?? false}),
     reset: () =>
         set(state => ({
             isDemoVideoWatched: false,
@@ -64,12 +68,13 @@ export const useFirstTimeShowStore = create<FirstTimeShowState>()(
                 isStartInvitingModalShowed: state.isStartInvitingModalShowed,
                 isApprovedUserScreenShowed: state.isApprovedUserScreenShowed,
                 isWhosInModalShowed: state.isWhosInModalShowed,
+                isFakeSwipeShowed: state.isFakeSwipeShowed,
             }),
             onRehydrateStorage: () => (state, error) => {
                 if (error) {
                     console.error('FirstTimeShowStore: hydration error', error);
                 } else {
-                    useFirstTimeShowStore.setState({ isStorageReady: true });
+                    useFirstTimeShowStore.setState({isStorageReady: true});
                 }
             },
         },
@@ -82,3 +87,4 @@ export const selectIsStartInvitingModalShowed = (state: FirstTimeShowState): boo
 export const selectIsStorageReady = (state: FirstTimeShowState): boolean => state.isStorageReady;
 export const selectIsApprovedUserScreenShowed = (state: FirstTimeShowState): boolean => state.isApprovedUserScreenShowed;
 export const selectIsWhosInModalShowed = (state: FirstTimeShowState): boolean => state.isWhosInModalShowed;
+export const selectIsFakeSwipeShowed = (state: FirstTimeShowState): boolean => state.isFakeSwipeShowed;
