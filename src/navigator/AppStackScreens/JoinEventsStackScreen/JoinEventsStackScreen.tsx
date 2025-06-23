@@ -1,7 +1,7 @@
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import Header from 'components/Header/Header';
-import {joinEventsPath} from 'constants/pathLocations';
-import JoinEventsWrapper from 'screens/App/JoinEvents/JoinEventsWrapper';
+import { joinEventsPath } from 'constants/pathLocations';
+import JoinEvents from 'screens/App/JoinEvents/JoinEvents';
 
 const JoinEventsStack = createStackNavigator();
 
@@ -11,7 +11,7 @@ const JoinEventsStackScreen = () => {
       <JoinEventsStack.Screen
         key={joinEventsPath}
         name={joinEventsPath}
-        component={JoinEventsWrapper}
+        component={JoinEvents}
         options={{
           headerShown: true,
           header: () => <Header badge={true} logoType="logo" headerType="request" />,

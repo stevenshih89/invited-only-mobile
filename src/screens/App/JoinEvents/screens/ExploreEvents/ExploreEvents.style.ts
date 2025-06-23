@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { whiteColor } from 'constants/colors';
 import { Satoshi500 } from 'constants/fonts';
-import { screenHeight } from 'constants/common';
+import { screenHeight, screenWidth } from 'constants/common';
 
 export const EventCardContainer = styled.View`
   align-items: center;
@@ -18,6 +18,15 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
   height: 95%;
+`;
+
+export const MapLoaderText = styled.Text`
+  font-size: ${RFValue(24, 932)}px;
+  color: ${whiteColor};
+  font-family: ${Satoshi500};
+  width: ${screenWidth * 0.6};
+  text-align: center;
+
 `;
 
 export const EventsScrollViewContainer = styled(ScrollView)``;

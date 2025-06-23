@@ -1,31 +1,24 @@
 import * as S from './ExploreEventsEmptyFallback.style';
-import DefaultBackground from 'components/DefaultBackground/DefaultBackground';
-import useUser from 'hooks/user/useUser';
-import MyEventsFallbackImage from 'src/assets/images/app/joined-events-empty-fallback.png';
 import EventCardLocked from 'src/assets/images/app/empty-card-fallback-event.png';
+import useUser from 'hooks/user/useUser';
+import MapLoader from 'screens/App/IO/components/MapLoader/MapLoader';
 
 const ExploreEventsEmptyFallback = () => {
   const { user } = useUser();
   const isLocked = user?.uid && !user?.accountReviewed;
-
-  return (
-    <DefaultBackground>
-      {isLocked ? (
+  if (isLocked) {
+    return (
+      <S.Container>
         <S.LockedContainer source={EventCardLocked} resizeMode="contain" />
-      ) : (
-        <S.Container testID="empty-state-container">
-          <S.EmptyFallbackImage testID="empty-state-image" resizeMode="contain" source={MyEventsFallbackImage} />
-          <S.FallbackTextContainer testID="empty-state-text-container">
-            <S.TextContainer>
-              <S.FallbackTitleText testID="empty-state-title">{`Build Your Profile,\nGet More Invites`}</S.FallbackTitleText>
-            </S.TextContainer>
-            <S.TextContainer>
-              <S.FallbackInstructorTex testID="empty-state-description">Add details to attract invites!</S.FallbackInstructorTex>
-            </S.TextContainer>
-          </S.FallbackTextContainer>
-        </S.Container>
-      )}
-    </DefaultBackground>
+      </S.Container>
+    )
+  }
+  return (
+    <S.Container>
+      <MapLoader />
+      <S.MapLoaderText>That&apos;s all for now!</S.MapLoaderText>
+      <S.MapLoaderSubText>Please check later – new events will be listed soon.</S.MapLoaderSubText>
+    </S.Container>
   );
 };
 
