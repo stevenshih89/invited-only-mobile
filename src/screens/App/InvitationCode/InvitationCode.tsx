@@ -65,15 +65,17 @@ const InvitationCode = () => {
               )}
             </S.BackgroundImage>
           </S.ContentContainer>
-          <S.FooterContainer>
-            <S.InviteButton testID="share-social-button" onPress={handleGoToShareSocialLink}>
-              <S.InviteTitle>Do not have an invitation code?</S.InviteTitle>
-              <S.InviteLink>Share socials for invite</S.InviteLink>
-            </S.InviteButton>
-            <S.Description>
-              This app is invite-only. Share a link to one of your social profiles, and we&apos;ll check it out to let you in.
-            </S.Description>
-          </S.FooterContainer>
+          {!isSuccessfullySubmitted && (
+            <S.FooterContainer>
+              <S.InviteButton testID="share-social-button" onPress={handleGoToShareSocialLink}>
+                <S.InviteTitle>Do not have an invitation code?</S.InviteTitle>
+                <S.InviteLink>Share socials for invite</S.InviteLink>
+              </S.InviteButton>
+              <S.Description>
+                This app is invite-only. Share a link to one of your social profiles, and we&apos;ll check it out to let you in.
+              </S.Description>
+            </S.FooterContainer>
+          )}
         </S.Container>
       </TouchableWithoutFeedback>
     </S.SafeArea>

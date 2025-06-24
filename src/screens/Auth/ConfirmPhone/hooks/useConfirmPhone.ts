@@ -1,17 +1,17 @@
-import {useContext, useState, RefObject, useEffect} from 'react';
+import { useContext, useState, RefObject, useEffect } from 'react';
 
-import {TextInput} from 'react-native';
-import {useBlurOnFulfill, useClearByFocusCell} from 'react-native-confirmation-code-field';
+import { TextInput } from 'react-native';
+import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import firestore from '@react-native-firebase/firestore';
-import {components} from '@invited-only/invited-only-api';
+import { components } from '@invited-only/invited-only-api';
 import * as amplitude from '@amplitude/analytics-react-native';
-import {FirebaseCollectionsContext} from 'contexts/FirebaseCollectionNamesContext';
-import {useAuthStore} from 'src/store/authStore';
-import {showToast} from 'helpers/showToast';
-import {useAppNavigation} from 'hooks/useAppNavigation';
+import { FirebaseCollectionsContext } from 'contexts/FirebaseCollectionNamesContext';
+import { useAuthStore } from 'src/store/authStore';
+import { showToast } from 'helpers/showToast';
+import { useAppNavigation } from 'hooks/useAppNavigation';
 import useMessaging from 'hooks/useMessaging';
 import useRemoteConfig from 'hooks/useRemoteConfig';
-import {BackendApiContext} from 'contexts/BackendApiContex';
+import { BackendApiContext } from 'contexts/BackendApiContex';
 
 export const useConfirmPhone = (route: {
   params: {
@@ -21,7 +21,7 @@ export const useConfirmPhone = (route: {
 }) => {
   const invitedOnlyBackendApi = useContext(BackendApiContext);
   const navigation = useAppNavigation();
-  const {userInfo: apiUserInfoCollection} = useContext(FirebaseCollectionsContext);
+  const { userInfo: apiUserInfoCollection } = useContext(FirebaseCollectionsContext);
   const mobilePhone = route?.params?.mobilePhone;
   const isLogin = route?.params?.isLogin || false;
   const [code, setCode] = useState<string>('');
@@ -31,13 +31,13 @@ export const useConfirmPhone = (route: {
   });
 
   const [resendTimer, setResendTimer] = useState(0);
-  const {phoneVerificationCodeLength} = useRemoteConfig();
-  const CELL_COUNT: number = phoneVerificationCodeLength ? parseInt(phoneVerificationCodeLength) : 6;
-  const ref: RefObject<TextInput> = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
-  const {setupNotifications} = useMessaging();
-  const {setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata} = useAuthStore();
-  const {mutate: verifyOtp, isPending: isLoadingVerifyOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
-  const {mutate: sendOtp, isPending: isLoadingSendOtp} = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
+  const { phoneVerificationCodeLength } = useRemoteConfig();
+  const CELL_COUNT: number = phoneVerificationCodeLength ? parseInt(phoneVerificationCodeLength) : 4;
+  const ref: RefObject<TextInput> = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
+  const { setupNotifications } = useMessaging();
+  const { setOnBoarding, setAccessToken, setRefreshToken, setUserMetadata } = useAuthStore();
+  const { mutate: verifyOtp, isPending: isLoadingVerifyOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/verify-otp');
+  const { mutate: sendOtp, isPending: isLoadingSendOtp } = invitedOnlyBackendApi.useMutation('post', '/auth/send-otp');
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -60,7 +60,7 @@ export const useConfirmPhone = (route: {
       }
       setResendTimer(59);
       const phone = `${mobilePhone}`.trim().replace(/\s/g, '');
-      await sendOtp({body: {phone}});
+      await sendOtp({ body: { phone } });
     } catch (e: any) {
       showToast('basic', `${e?.message.split(']')[1]}`);
     }
@@ -86,7 +86,7 @@ export const useConfirmPhone = (route: {
 
         const userData = userQuerySnapshot.docs[0].data() as components['schemas']['User'];
         verifyOtp(
-          {body: {phone: mobilePhone, code: verificationCode}},
+          { body: { phone: mobilePhone, code: verificationCode } },
           {
             onSuccess: data => {
               setOnBoarding({
@@ -120,7 +120,7 @@ export const useConfirmPhone = (route: {
         );
       } else {
         verifyOtp(
-          {body: {phone: mobilePhone, code: verificationCode}},
+          { body: { phone: mobilePhone, code: verificationCode } },
           {
             onSuccess: data => {
               setOnBoarding({

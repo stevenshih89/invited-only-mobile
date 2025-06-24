@@ -93,7 +93,7 @@ const EnterBirthday: FC = (): JSX.Element => {
           modal
           theme="dark"
           minimumDate={new Date(1900, 0, 1)}
-          maximumDate={new Date()}
+          maximumDate={new Date(new Date().getFullYear() - 18, 0, 1)}
           date={date || new Date()}
           mode="date"
           onConfirm={date => {
