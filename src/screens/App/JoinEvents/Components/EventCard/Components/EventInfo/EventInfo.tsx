@@ -34,6 +34,17 @@ const EventInfo: FC<EventInfoProps> = ({ event }) => {
             <S.SubText>{hour}</S.SubText>
           </S.Column>
         </S.RowGap>
+
+      </S.StyledRadialGradient>
+      <S.StyledRadialGradient
+        colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
+        stops={[0, 0.695, 1]}
+        center={[220, -386]}
+        radius={400}>
+        <S.Column>
+          <S.SectionTitle>Description</S.SectionTitle>
+          <S.SubText>{event.description}</S.SubText>
+        </S.Column>
       </S.StyledRadialGradient>
       <S.StyledRadialGradient
         colors={['rgba(26, 26, 26, 0.40)', 'rgba(0, 0, 0, 0.00)', 'rgba(255, 255, 255, 0.07)']}
