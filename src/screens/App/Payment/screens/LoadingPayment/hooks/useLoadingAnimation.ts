@@ -1,5 +1,5 @@
-import {useEffect} from 'react';
-import {Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming} from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 export const useLoadingAnimation = () => {
   const SIZE = 180;
@@ -11,12 +11,12 @@ export const useLoadingAnimation = () => {
   const rotation = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{rotate: `${rotation.value}deg`}],
+    transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
   useEffect(() => {
-    rotation.value = withRepeat(withTiming(360, {duration: 2000, easing: Easing.linear}), -1, false);
+    rotation.value = withRepeat(withTiming(360, { duration: 2000, easing: Easing.linear }), -1, false);
   }, []);
 
-  return {animatedStyle, SIZE, STROKE_WIDTH, RADIUS, CIRCUMFERENCE, ARC_LENGTH};
+  return { animatedStyle, SIZE, STROKE_WIDTH, RADIUS, CIRCUMFERENCE, ARC_LENGTH };
 };

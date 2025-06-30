@@ -98,7 +98,7 @@ const AppStackScreen = () => {
     const navigation = useAppNavigation();
     const isApprovedUserScreenShowed = useFirstTimeShowStore(selectIsApprovedUserScreenShowed);
 
-    console.log('isApprovedUserScreenShowed', isApprovedUserScreenShowed);
+
     if (isLoading) {
         return <AppLoader />;
     }

@@ -38,7 +38,6 @@ export const useChatSocket = (chatId: string, updateChatMessages: (props: Update
         setSocket(newSocket);
 
         const handleConnect = () => {
-            console.log('handleConnect', chatId);
             newSocket.emit('joinChatRoom', chatId);
         };
 

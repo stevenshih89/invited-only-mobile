@@ -113,7 +113,7 @@ export const NewConnectionModal: React.FC<NewConnectionModalProps> = ({ visible,
                                 <S.StyledContinueInvitingIconContainer>
                                     <S.StyledContinueInvitingIcon width={20} height={20} />
                                 </S.StyledContinueInvitingIconContainer>
-                                <S.ContinueButtonText>Continue inviting</S.ContinueButtonText>
+                                <S.ContinueButtonText>{isEvent ? 'Continue Exploring' : 'Continue inviting'}</S.ContinueButtonText>
                             </S.ContinueButton>
                         </S.ButtonContainer>
                     </Animated.View>
