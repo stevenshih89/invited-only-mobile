@@ -6,71 +6,76 @@ import * as S from './EventDatePicker.styled';
 import {parseStringToDate} from 'helpers/genericDateFormater';
 
 const formatTime = (date: Date) => {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
 };
 
 export const getDateString = (date: Date) => {
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = String(date.getFullYear()).slice(-2);
-  return `${month}/${day}/${year}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${month}/${day}/${year}`;
 };
 
 const EventDatePicker = () => {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const {errors, values, touched, setFieldValue} = useFormikContext<Partial<components['schemas']['EventData']>>();
-  return (
-    <S.RowContainer>
-      <S.HalfFieldContainer>
-        <S.FieldLabel>Date *</S.FieldLabel>
-        <S.Input onPress={() => setShowDatePicker(true)}>
-          <S.StyledTextInput
-            placeholder="MM/DD/YY"
-            placeholderTextColor="#767676"
-            value={getDateString(values.date ? new Date(values.date) : new Date())}
-            editable={false}
-            pointerEvents="none"
-          />
-        </S.Input>
-        {touched.date && errors.date && <S.ErrorText>{errors.date}</S.ErrorText>}
-
-        <DatePicker
-          open={showDatePicker}
-          onCancel={() => {
-            setShowDatePicker(false);
-          }}
-          modal
-          date={parseStringToDate(values.date) || new Date()}
-          mode="date"
-          onConfirm={date => {
-            setFieldValue('date', date);
-            setShowDatePicker(false);
-          }}
-        />
-      </S.HalfFieldContainer>
-
-      {/* Hour Field */}
-      <S.HalfFieldContainer>
-        <S.FieldLabel>Hour *</S.FieldLabel>
-        <S.Input onPress={() => setShowTimePicker(true)}>
-          <S.StyledTextInput placeholder="00:00" placeholderTextColor="#767676" value={values.hour} editable={false} pointerEvents="none" />
-        </S.Input>
-        {touched.hour && errors.hour && <S.ErrorText>{errors.hour}</S.ErrorText>}
-        <DatePicker
-          open={showTimePicker}
-          modal
-          date={parseStringToDate(values.date) || new Date()}
-          mode="time"
-          onConfirm={hour => {
-            setFieldValue('hour', formatTime(hour));
-            setShowTimePicker(false);
-          }}
-        />
-      </S.HalfFieldContainer>
-    </S.RowContainer>
-  );
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+    const {errors, values, touched, setFieldValue} = useFormikContext<Partial<components['schemas']['EventData']>>();
+    return (
+        <S.RowContainer>
+            <S.HalfFieldContainer>
+                <S.FieldLabel>Date *</S.FieldLabel>
+                <S.Input onPress={() => setShowDatePicker(true)}>
+                    <S.StyledTextInput
+                        placeholder="MM/DD/YY"
+                        placeholderTextColor="#767676"
+                        value={getDateString(values.date ? new Date(values.date) : new Date())}
+                        editable={false}
+                        pointerEvents="none"
+                    />
+                </S.Input>
+                {touched.date && errors.date && <S.ErrorText>{errors.date}</S.ErrorText>}
+                <DatePicker
+                    open={showDatePicker}
+                    onCancel={() => {
+                        setShowDatePicker(false);
+                    }}
+                    modal
+                    date={parseStringToDate(values.date) || new Date()}
+                    mode="date"
+                    theme="dark"
+                    onConfirm={date => {
+                        setFieldValue('date', date);
+                        setShowDatePicker(false);
+                    }}
+                />
+            </S.HalfFieldContainer>
+            <S.HalfFieldContainer>
+                <S.FieldLabel>Hour *</S.FieldLabel>
+                <S.Input onPress={() => setShowTimePicker(true)}>
+                    <S.StyledTextInput
+                        placeholder="00:00"
+                        placeholderTextColor="#767676"
+                        value={values.hour}
+                        editable={false}
+                        pointerEvents="none"
+                    />
+                </S.Input>
+                {touched.hour && errors.hour && <S.ErrorText>{errors.hour}</S.ErrorText>}
+                <DatePicker
+                    open={showTimePicker}
+                    modal
+                    date={parseStringToDate(values.date) || new Date()}
+                    mode="time"
+                    theme="dark"
+                    onConfirm={hour => {
+                        setFieldValue('hour', formatTime(hour));
+                        setShowTimePicker(false);
+                    }}
+                />
+            </S.HalfFieldContainer>
+        </S.RowContainer>
+    );
 };
 export default EventDatePicker;

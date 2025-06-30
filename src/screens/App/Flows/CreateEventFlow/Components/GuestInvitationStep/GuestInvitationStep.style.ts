@@ -1,208 +1,98 @@
 import styled from 'styled-components/native';
-import {Dimensions} from 'react-native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-// Colors and Fonts (assuming you're importing them)
-import {black60Color, black3Color, whiteColor, lightGray5Color, lightGray9Color, lightRedColor, blackColor} from 'constants/colors';
-import {Satoshi400, Satoshi500} from 'constants/fonts';
-
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+import {whiteColor, blackColor} from 'constants/colors';
+import {Satoshi500} from 'constants/fonts';
+import {screenHeight} from 'constants/common';
 
 export const Wrapper = styled.View`
-  flex: 1;
+    flex: 1;
 `;
 
-// Containers
 export const Container = styled.View`
-  flex: 1;
-  padding-bottom: 40px;
-`;
-
-export const OverlayContainer = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: ${screenWidth}px;
-  height: ${screenHeight}px;
-  z-index: 1;
-  background-color: ${black60Color};
-`;
-
-export const StepHintContainer = styled.View`
-  z-index: 111;
-`;
-
-export const WrapperSelectYourDesiredCompany = styled.View`
-  background-color: ${black3Color};
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: ${screenHeight / 42}px;
-`;
-
-export const WrapperOtherFriends = styled.View`
-  background-color: ${black3Color};
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: ${screenHeight / 36}px;
-`;
-
-export const WrapperPersonIcon = styled.View`
-  background-color: ${lightGray5Color};
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const RowMale = styled.View`
-  justify-content: space-between;
-  margin-top: ${screenHeight / 35}px;
-`;
-
-export const RowButtons = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-export const RowButtonsOtherFriends = styled.View`
-  flex-direction: row;
-  margin-top: ${screenHeight / 80}px;
-`;
-
-export const WrapperTextCount = styled.View`
-  flex: 1;
-  height: 54px;
-  justify-content: center;
-  border: 1px solid ${lightGray9Color};
-  border-radius: 10px;
-  margin-horizontal: 10px;
-`;
-
-export const HandIconContainer = styled.View`
-  position: absolute;
-  bottom: -24px;
-  right: -16px;
-`;
-
-// Texts
-export const TextSelectYourDesiredCompany = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(18, 812)}px;
-  color: ${whiteColor};
-  margin-bottom: ${RFValue(16, 812)}px;
-`;
-
-export const TextOtherFriend = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(18, 812)}px;
-  color: ${whiteColor};
-  margin-bottom: ${screenHeight / 42}px;
-`;
-
-export const TextPersonGender = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(14, 812)}px;
-  color: ${whiteColor};
-  margin-bottom: ${RFValue(8, 812)}px;
-`;
-
-export const TextPersonGenderFriends = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(14, 812)}px;
-  color: ${whiteColor};
-  margin-top: ${screenHeight / 32}px;
-`;
-
-export const TextButton = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(14, 812)}px;
-  color: ${whiteColor};
-`;
-
-export const TextCountFriends = styled.Text`
-  font-family: ${Satoshi400};
-  font-size: ${RFValue(16, 812)}px;
-  color: ${whiteColor};
-  border: 1px solid ${lightGray9Color};
-  border-radius: 10px;
-  text-align: center;
-  width: 92px;
-  height: 41px;
-  padding-vertical: 6px;
-  margin-horizontal: ${screenWidth / 38}px;
-`;
-
-export const TextCount = styled.Text`
-  font-family: ${Satoshi500};
-  font-size: ${RFValue(14, 812)}px;
-  color: ${whiteColor};
-  text-align: center;
-`;
-
-export const ErrorText = styled.Text`
-  font-family: ${Satoshi400};
-  font-size: ${RFValue(14, 812)}px;
-  color: ${lightRedColor};
-  margin-bottom: 10px;
-`;
-
-// Buttons
-
-export const ButtonPress = styled.TouchableOpacity`
-  flex: 1;
-  background-color: ${lightGray9Color};
-  border-radius: 10px;
-  height: 54px;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ButtonPressOtherFriends = styled.TouchableOpacity`
-  background-color: ${lightGray9Color};
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  width: 92px;
-  height: 41px;
+    flex: 1;
+    padding-bottom: 40px;
 `;
 
 export const ButtonsContainer = styled.View`
-  position: absolute;
-  bottom: 0;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  gap: 12px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 12px;
 `;
 
 export const ContinueButton = styled.TouchableOpacity`
-  flex: 2;
-  justify-content: center;
-  align-items: center;
-  background-color: ${whiteColor};
-  border-radius: 100px;
-  height: 48px;
-  margin-right: 12px;
-  margin-left: 12px;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+    background-color: ${whiteColor};
+    border-radius: 100px;
+    height: 48px;
+    margin-right: 12px;
+    margin-left: 12px;
 `;
 
 export const ContinueButtonText = styled.Text`
-  color: ${blackColor};
-  font-family: ${Satoshi500};
+    color: ${blackColor};
+    font-family: ${Satoshi500};
 `;
 
-export const CancelButton = styled.TouchableOpacity`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 100px;
-  height: 48px;
+export const TicketWrapper = styled.View`
+    align-items: center;
+    margin-top: ${screenHeight / 30}px;
 `;
 
-export const CancelButtonText = styled.Text`
-  color: ${whiteColor};
-  font-family: ${Satoshi500};
+export const TicketBackground = styled.ImageBackground.attrs({
+    resizeMode: 'contain',
+})`
+    width: 100%;
+    align-items: center;
+    padding-top: ${screenHeight / 12}px;
+    height: ${screenHeight / 6}px;
+`;
+
+export const TicketTitle = styled.Text`
+    font-size: ${RFValue(24, 932)}px;
+    font-family: ${Satoshi500};
+    color: ${whiteColor};
+`;
+
+export const CounterRow = styled.View`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-horizontal: ${screenHeight / 16}px;
+    margin-top: ${screenHeight / 28}px;
+`;
+
+export const IconButton = styled.TouchableOpacity`
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.08);
+    border-radius: 100px;
+    width: ${screenHeight / 20}px;
+    height: ${screenHeight / 20}px;
+    align-items: center;
+    justify-content: center;
+`;
+
+interface CountTextProps {
+    active: boolean;
+}
+
+export const CountText = styled.Text<CountTextProps>`
+    font-size: ${RFValue(64, 932)}px;
+    font-family: ${Satoshi500};
+    color: ${({active}: CountTextProps) => (active ? whiteColor : 'rgba(255, 255, 255, 0.2)')};
+`;
+
+export const DescriptionText = styled.Text`
+    opacity: 0.8;
+    color: ${whiteColor};
+    font-size: ${RFValue(16, 932)}px;
+    font-family: ${Satoshi500};
+    margin-top: 16px;
+    text-align: center;
 `;
