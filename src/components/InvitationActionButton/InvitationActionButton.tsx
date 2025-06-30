@@ -1,16 +1,14 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
-import { components } from '@invited-only/invited-only-api';
 import * as S from './InvitationActionButton.style';
 import ConfirmedBadge from 'src/assets/images/icons/event-confirm-badge.svg';
-import { whiteColor } from 'constants/colors';
-import { ApproveActionButton } from 'screens/App/Chat/ChatWindow/ChatWindowHeader/ApproveActionButton/ApproveActionButton';
+import HourGlassIcon from 'assets/images/icons/hourglass-filled.svg';
+import {ApproveActionButton} from 'screens/App/Chat/ChatWindow/ChatWindowHeader/ApproveActionButton/ApproveActionButton';
 
 interface InvitationActionButtonProps {
-    connectionDetails: { guestId: string, hostId: string, eventId: string };
+    connectionDetails: {guestId: string; hostId: string; eventId: string};
     isJoinedEvent: boolean;
     invitationStatus: string;
-    updateConnectionStatusData: (data: { hostAction: 'confirm' | 'reject' | 'none', guestAction: 'confirm' | 'reject' | 'none' }) => void;
+    updateConnectionStatusData: (data: {hostAction: 'confirm' | 'reject' | 'none'; guestAction: 'confirm' | 'reject' | 'none'}) => void;
 }
 
 export const InvitationActionButton: React.FC<InvitationActionButtonProps> = ({
@@ -26,7 +24,7 @@ export const InvitationActionButton: React.FC<InvitationActionButtonProps> = ({
         if (invitationStatus === 'hostApprovePendingForGuest') {
             return (
                 <S.WaitingContainer>
-                    <ActivityIndicator size="small" color={whiteColor} />
+                    <HourGlassIcon width={16} height={16} />
                     <S.WaitingText>Waiting</S.WaitingText>
                 </S.WaitingContainer>
             );
@@ -50,7 +48,7 @@ export const InvitationActionButton: React.FC<InvitationActionButtonProps> = ({
         if (invitationStatus === 'connectionInitiated') {
             return (
                 <S.WaitingContainer>
-                    <ActivityIndicator size="small" color={whiteColor} />
+                    <HourGlassIcon width={16} height={16} />
                     <S.WaitingText>Waiting</S.WaitingText>
                 </S.WaitingContainer>
             );
@@ -68,4 +66,4 @@ export const InvitationActionButton: React.FC<InvitationActionButtonProps> = ({
     };
 
     return isJoinedEvent ? renderActionButtonForGuest() : renderActionButtonForHost();
-}; 
+};

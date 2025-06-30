@@ -36,7 +36,15 @@ const IoHeader: React.FC<IoHeaderProps> = ({events, selectedEvent, onEventSelect
                     </S.RequestButton>
                 </S.RequestAndEventsContainer>
             ) : (
-                <CreateEventButton />
+                <S.RequestAndEventsContainer>
+                    <CreateEventButton />
+                    <S.RequestButton>
+                        <S.RequestButtonText>Requests</S.RequestButtonText>
+                        <S.RequestBadge>
+                            <S.RequestBadgeText>0</S.RequestBadgeText>
+                        </S.RequestBadge>
+                    </S.RequestButton>
+                </S.RequestAndEventsContainer>
             )}
         </S.HeaderContainer>
     );

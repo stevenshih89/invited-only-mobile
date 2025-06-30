@@ -107,7 +107,7 @@ const AppStackScreen = () => {
         if (user?.accountConfirmed && !isApprovedUserScreenShowed) {
             return acceptedUserPath;
         }
-        if (userMetadata?.firstLogin && !user?.accountConfirmed) {
+        if (userMetadata?.firstLogin && !user?.accountConfirmed && !user?.accountReviewed) {
             return invitationCodePath;
         }
         return bottomTabsStackPath;
