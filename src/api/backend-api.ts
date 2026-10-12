@@ -3,7 +3,7 @@ import createFetchClient, { Middleware } from 'openapi-fetch';
 import createClient from 'openapi-react-query';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { paths } from '@invited-only/invited-only-api';
-import { BACKEND_BASE_64_AUTH, BACKEND_BASE_URL, CODE_VERSION } from '@env';
+import { APP_ENV, BACKEND_BASE_64_AUTH, BACKEND_BASE_URL, CODE_VERSION } from '@env';
 
 const myMiddleware: Middleware = {
   onError: (error: any) => {
@@ -30,6 +30,10 @@ export const initializeApiClient = async () => {
     console.log('📡 initializeApiClient: Remote Config string type:', typeof remoteConfigString);
 
     if (!remoteConfigString || remoteConfigString.trim() === '') {
+      console.warn('⚠️ initializeApiClient: Remote Config BackendPath is empty, using default');
+      console.log('🔧 initializeApiClient: Using default BACKEND_BASE_URL:', BACKEND_BASE_URL);
+      return createClient<paths>(createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL }));
+    } else if (APP_ENV === 'dev') {
       console.warn('⚠️ initializeApiClient: Remote Config BackendPath is empty, using default');
       console.log('🔧 initializeApiClient: Using default BACKEND_BASE_URL:', BACKEND_BASE_URL);
       return createClient<paths>(createFetchClient<paths>({ baseUrl: BACKEND_BASE_URL }));

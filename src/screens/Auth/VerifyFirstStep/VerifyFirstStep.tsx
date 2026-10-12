@@ -17,7 +17,9 @@ const VerifySecondStep: FC = (): JSX.Element => {
         if (imageUri) {
           handleNext();
         } else {
-          openCamera();
+          setImageUri("No photo")
+          handleNext();
+          // openCamera();
         }
       }}
       continueButtonDisabled={isLoading}
